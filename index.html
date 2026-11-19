@@ -43,7 +43,6 @@
     .left-panel { width: 46%; display: flex; flex-direction: column; border-right: 1px solid #dadce0; background: #fff; }
     #map { width: 100%; flex: 1; min-height: 320px; position: relative; }
 
-    /* 좌측 하단 선택 병원 요약 & 외부 연동 카드 */
     .selected-hospital-card {
       background: #ffffff; border-top: 1px solid #dadce0; padding: 14px 18px;
       display: flex; flex-direction: column; gap: 8px;
@@ -117,7 +116,6 @@
       font-size: 12px !important;
     }
 
-    /* 주변 착한가격업소 스타일 */
     .cat-pills { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .cat-pill { padding: 5px 11px; border-radius: 16px; font-size: 12px; font-weight: 700; border: 1px solid #dadce0; background: #fff; color: #3c4043; }
     .cat-pill.active[data-cat="ALL"] { background: #202124; color: #fff; border-color: #202124; }
@@ -138,7 +136,6 @@
     .summary-card .sc-val { font-size: 13px; color: #202124; font-weight: 700; margin-top: 2px; }
     .summary-card .sc-sub { font-size: 11px; color: #1967d2; margin-top: 2px; }
 
-    /* 병원 상세현황 (병상·시설·의료진·특수진료) */
     .detail-scroll-area {
       flex: 1; overflow-y: auto; padding: 16px 20px 28px; background: #f8f9fa;
       display: flex; flex-direction: column; gap: 14px;
@@ -273,7 +270,6 @@
 </header>
 
 <div class="main-container">
-  <!-- 좌측 패널: 지도 + 선택 병원 요약 및 외부 연동 카드 -->
   <div class="left-panel">
     <div id="map"></div>
 
@@ -303,9 +299,7 @@
     </div>
   </div>
 
-  <!-- 우측 패널 -->
   <div class="right-panel">
-    <!-- 1. 병원 상세현황 (병상수 · 시설 · 의료진 · 특수진료) 뷰 -->
     <div id="detailRightWrapper" style="display:flex; flex-direction:column; height:100%;">
       <div class="filter-bar" style="background:#ffffff;">
         <select id="detailHospSelector" onchange="onDetailHospitalSelect()" style="min-width:250px; font-weight:600;"></select>
@@ -314,7 +308,6 @@
       <div class="detail-scroll-area" id="detailContentArea"></div>
     </div>
 
-    <!-- 2. 전국 47개소 마스터 목록 뷰 -->
     <div id="hospitalRightWrapper" style="display:none; flex-direction:column; height:100%;">
       <div class="filter-bar">
         <select id="regionFilter" onchange="renderTableAndMap()">
@@ -347,7 +340,6 @@
       </div>
     </div>
 
-    <!-- 3. 주변 착한가격업소 뷰 -->
     <div id="foodRightWrapper" style="display:none; flex-direction:column; height:100%;">
       <div class="filter-bar">
         <select id="foodHospFilter" onchange="onFoodHospitalChange()">
@@ -398,9 +390,6 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  /* ============================================================================
-     1. 전국 상급종합병원 47개소 고정 마스터 데이터 (좌표 및 공식 홈페이지 포함)
-  ============================================================================ */
   const HOSPITALS = [
     { id: "HOSP_01", region: "서울권", name: "강북삼성병원", district: "서울특별시 종로구", address: "서울특별시 종로구 새문안로 29", lat: 37.5683, lng: 126.9677, meta: "종합 국내 11위(글로벌 164위)", phone: "02-2001-2001", homepage: "https://www.kbsmc.co.kr" },
     { id: "HOSP_02", region: "서울권", name: "건국대학교병원", district: "서울특별시 광진구", address: "서울특별시 광진구 능동로 120-1", lat: 37.5408, lng: 127.0722, meta: "종합 국내 13위(글로벌 185위)", phone: "1588-1533", homepage: "https://www.kuh.ac.kr" },
@@ -420,7 +409,7 @@
     { id: "HOSP_16", region: "경기 서북부권", name: "순천향대학교부속부천병원", district: "경기도 부천시 원미구", address: "경기도 부천시 원미구 조마루로 170", lat: 37.4984, lng: 126.7630, meta: "종합 국내 61위", phone: "1899-5700", homepage: "https://www.schmc.ac.kr/bucheon" },
     { id: "HOSP_17", region: "경기 서북부권", name: "의료법인길의료재단길병원", district: "인천광역시 남동구", address: "인천광역시 남동구 남동대로774번길 21", lat: 37.4522, lng: 126.7093, meta: "종합 국내 42위", phone: "1577-2299", homepage: "https://www.gilhospital.com" },
     { id: "HOSP_18", region: "경기 서북부권", name: "인하대학교의과대학부속병원", district: "인천광역시 중구", address: "인천광역시 중구 인항로 27", lat: 37.4586, lng: 126.6320, meta: "종합 국내 9위(글로벌 122위) | 암 국내14위(글로벌217위)", phone: "032-890-2114", homepage: "https://www.inha.com" },
-    { id: "HOSP_19", region: "경기 남부권", name: "가톨릭대학교성빈센트병원", district: "경기도 수원시 팔달구", address: "경기도 수원시 팔달구 중부대로 93", lat: 37.2778, lng: 127.0275, meta: "종합 국내 57위", phone: "031-1577-8588", homepage: "http://www.cmcvincent.or.kr/skip.html" },
+    { id: "HOSP_19", region: "경기 남부권", name: "가톨릭대학교성빈센트병원", district: "경기도 수원시 팔달구", address: "경기도 수원시 팔달구 중부대로 93", lat: 37.2778, lng: 127.0275, meta: "종합 국내 57위", phone: "031-1577-8588", homepage: "https://www.cmcvincent.or.kr" },
     { id: "HOSP_20", region: "경기 남부권", name: "고려대학교의과대학부속안산병원", district: "경기도 안산시 단원구", address: "경기도 안산시 단원구 적금로 123", lat: 37.3186, lng: 126.8249, meta: "종합 국내 28위", phone: "1577-7516", homepage: "https://ansan.kumc.or.kr" },
     { id: "HOSP_21", region: "경기 남부권", name: "분당서울대학교병원", district: "경기도 성남시 분당구", address: "경기도 성남시 분당구 구미로173번길 82", lat: 37.3519, lng: 127.1232, meta: "종합 국내 5위(글로벌 54위) | 암 국내7위(글로벌68위), 정형외과 국내7위, 신경외과 국내6위", phone: "1588-3369", homepage: "https://www.snubh.org" },
     { id: "HOSP_22", region: "경기 남부권", name: "아주대학교병원", district: "경기도 수원시 영통구", address: "경기도 수원시 영통구 월드컵로 164", lat: 37.2794, lng: 127.0476, meta: "종합 국내 7위(글로벌 94위) | 암 국내9위(글로벌161위)", phone: "1688-6114", homepage: "https://hosp.ajoumc.or.kr" },
@@ -451,195 +440,1330 @@
     { id: "HOSP_47", region: "경남서부권", name: "학교법인성균관대학삼성창원병원", district: "경상남도 창원시 마산회원구", address: "경상남도 창원시 마산회원구 팔용로 158", lat: 35.2427, lng: 128.5919, meta: "종합 국내 22위", phone: "055-233-8899", homepage: "https://smc.skku.edu" }
   ];
 
-  /* ============================================================================
-     2. 병원별 시설·병상 및 진료과목·전문의 상세 데이터
-        (추후 나머지 병원 데이터를 이 객체에 추가하면 동일한 UI로 자동 표시됩니다)
-  ============================================================================ */
   const HOSPITAL_DETAILS = {
+    "HOSP_01": {
+      hospitalType: "상급종합",
+      founderType: "의료법인",
+      fullAddress: "(03181) 서울특별시 종로구 새문안로 29, (평동)",
+      phone: "02-2001-2001",
+      homepage: "https://www.kbsmc.co.kr",
+      beds: { generalHigh: 34, generalNormal: 526, icuAdult: 56, icuChild: 0, icuNeonatal: 20, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 18 },
+      facilities: { isolation: 12, sterile: 0, hospice: 1, delivery: 4, operating: 16, emergency: 20, physicalTherapy: 10, nursery: 17, roomingIn: 1, recovery: 10, hemodialysis: 20, brachytherapy: 0, radioiodine: 1 },
+      doctors: { total: 396, md: 389, dentist: 7, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 71 }, { name: "신경과", count: 8 }, { name: "정신건강의학과", count: 7 }, { name: "외과", count: 19 },
+        { name: "정형외과", count: 7 }, { name: "신경외과", count: 8 }, { name: "심장혈관흉부외과", count: 5 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 13 }, { name: "산부인과", count: 8 }, { name: "소아청소년과", count: 14 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 7 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 22 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 13 }, { name: "진단검사의학과", count: 5 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 7 }, { name: "응급의학과", count: 9 }, { name: "직업환경의학과", count: 10 },
+        { name: "예방의학과", count: 3 }, { name: "구강악안면외과", count: 1 }, { name: "치과보철과", count: 2 }, { name: "치주과", count: 1 }
+      ],
+      specialAreas: [
+        "비대면진료 시범사업 진료기관(의료기관)", "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관",
+        "차세대염기서열분석 기반 유전자 패널검사 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "측두하악관절자극요법 실시기관", "응급의료기관",
+        "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정용 인공호흡기 환자 재택관리 시범기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "재활환자 재택관리 시범기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_02": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(05030) 서울특별시 광진구 능동로 120-1, (화양동)",
+      phone: "1588-1533",
+      homepage: "https://www.kuh.ac.kr",
+      beds: { generalHigh: 32, generalNormal: 646, icuAdult: 62, icuChild: 0, icuNeonatal: 16, psyOpenHigh: 0, psyOpenNormal: 7, psyCloseHigh: 0, psyCloseNormal: 14 },
+      facilities: { isolation: 3, sterile: 4, hospice: 1, delivery: 2, operating: 21, emergency: 27, physicalTherapy: 14, nursery: 10, roomingIn: 1, recovery: 12, hemodialysis: 31, brachytherapy: 0, radioiodine: 1 },
+      doctors: { total: 396, md: 395, dentist: 1, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 68 }, { name: "신경과", count: 11 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 16 },
+        { name: "정형외과", count: 12 }, { name: "신경외과", count: 7 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 14 }, { name: "산부인과", count: 12 }, { name: "소아청소년과", count: 9 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 7 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 4 }, { name: "영상의학과", count: 31 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 9 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 6 }, { name: "응급의학과", count: 6 }, { name: "구강악안면외과", count: 1 },
+        { name: "치과보철과", count: 0 }, { name: "치과교정과", count: 0 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "응급의료기관",
+        "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관",
+        "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_03": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(02447) 서울특별시 동대문구 경희대로 23, (회기동)",
+      phone: "02-958-8114",
+      homepage: "https://www.khmc.or.kr",
+      beds: { generalHigh: 27, generalNormal: 646, icuAdult: 80, icuChild: 0, icuNeonatal: 26, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 2, psyCloseNormal: 19 },
+      facilities: { isolation: 19, sterile: 2, hospice: 1, delivery: 3, operating: 16, emergency: 27, physicalTherapy: 23, nursery: 7, roomingIn: 1, recovery: 8, hemodialysis: 30, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 430, md: 430, dentist: 0, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 73 }, { name: "신경과", count: 10 }, { name: "정신건강의학과", count: 7 }, { name: "외과", count: 13 },
+        { name: "정형외과", count: 16 }, { name: "신경외과", count: 6 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 13 }, { name: "산부인과", count: 7 }, { name: "소아청소년과", count: 14 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 7 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 4 }, { name: "영상의학과", count: 19 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 6 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 3 }, { name: "응급의학과", count: 9 }, { name: "직업환경의학과", count: 4 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관",
+        "가정간호실시기관", "가정용 인공호흡기 환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "재활환자 재택관리 시범기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_04": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(08308) 서울특별시 구로구 구로동로 148, 고려대부속구로병원 (구로동)",
+      phone: "02-2626-1114",
+      homepage: "https://guro.kumc.or.kr",
+      beds: { generalHigh: 62, generalNormal: 763, icuAdult: 95, icuChild: 0, icuNeonatal: 23, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 30 },
+      facilities: { isolation: 8, sterile: 26, hospice: 1, delivery: 5, operating: 24, emergency: 38, physicalTherapy: 11, nursery: 6, roomingIn: 1, recovery: 18, hemodialysis: 32, brachytherapy: 1, radioiodine: 2 },
+      doctors: { total: 523, md: 490, dentist: 33, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 80 }, { name: "신경과", count: 12 }, { name: "정신건강의학과", count: 6 }, { name: "외과", count: 29 },
+        { name: "정형외과", count: 16 }, { name: "신경외과", count: 13 }, { name: "심장혈관흉부외과", count: 7 }, { name: "성형외과", count: 6 },
+        { name: "마취통증의학과", count: 16 }, { name: "산부인과", count: 13 }, { name: "안과", count: 10 }, { name: "이비인후과", count: 8 },
+        { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 7 }, { name: "영상의학과", count: 31 }, { name: "방사선종양학과", count: 4 },
+        { name: "병리과", count: 6 }, { name: "진단검사의학과", count: 7 }, { name: "재활의학과", count: 4 }, { name: "핵의학과", count: 3 },
+        { name: "가정의학과", count: 10 }, { name: "응급의학과", count: 11 }, { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 3 },
+        { name: "치과교정과", count: 2 }, { name: "치주과", count: 1 }, { name: "치과보존과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관",
+        "암환자(요루) 재택관리 시범기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_05": {
+      hospitalType: "상급종합",
+      founderType: "사회복지법인",
+      fullAddress: "(06351) 서울특별시 강남구 일원로 81, (일원동, 삼성의료원)",
+      phone: "02-3410-2114",
+      homepage: "https://www.samsunghospital.com",
+      beds: { generalHigh: 124, generalNormal: 1334, icuAdult: 141, icuChild: 29, icuNeonatal: 59, psyOpenHigh: 1, psyOpenNormal: 16, psyCloseHigh: 1, psyCloseNormal: 26 },
+      facilities: { isolation: 21, sterile: 25, hospice: 1, delivery: 8, operating: 46, emergency: 63, physicalTherapy: 28, nursery: 30, roomingIn: 1, recovery: 43, hemodialysis: 34, brachytherapy: 0, radioiodine: 5 },
+      doctors: { total: 1313, md: 1294, dentist: 19, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 218 }, { name: "신경과", count: 38 }, { name: "정신건강의학과", count: 14 }, { name: "외과", count: 94 },
+        { name: "정형외과", count: 24 }, { name: "신경외과", count: 19 }, { name: "심장혈관흉부외과", count: 25 }, { name: "성형외과", count: 11 },
+        { name: "마취통증의학과", count: 48 }, { name: "산부인과", count: 22 }, { name: "소아청소년과", count: 62 }, { name: "안과", count: 23 },
+        { name: "이비인후과", count: 21 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 21 }, { name: "영상의학과", count: 96 },
+        { name: "방사선종양학과", count: 15 }, { name: "병리과", count: 26 }, { name: "진단검사의학과", count: 22 }, { name: "재활의학과", count: 10 },
+        { name: "핵의학과", count: 7 }, { name: "가정의학과", count: 11 }, { name: "응급의학과", count: 19 }, { name: "예방의학과", count: 1 },
+        { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 3 }, { name: "치과교정과", count: 1 }, { name: "소아치과", count: 1 },
+        { name: "치주과", count: 3 }, { name: "치과보존과", count: 3 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실",
+        "소아 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "중증소아 재택의료 시범기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(체외형&이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_06": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(03080) 서울특별시 종로구 대학로 101, (연건동)",
+      phone: "1588-5700",
+      homepage: "https://www.snuh.org",
+      beds: { generalHigh: 116, generalNormal: 1277, icuAdult: 106, icuChild: 24, icuNeonatal: 40, psyOpenHigh: 1, psyOpenNormal: 21, psyCloseHigh: 2, psyCloseNormal: 39 },
+      facilities: { isolation: 7, sterile: 22, hospice: 1, delivery: 4, operating: 54, emergency: 48, physicalTherapy: 16, nursery: 30, roomingIn: 0, recovery: 35, hemodialysis: 43, brachytherapy: 0, radioiodine: 3 },
+      doctors: { total: 1500, md: 1499, dentist: 1, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 168 }, { name: "신경과", count: 31 }, { name: "정신건강의학과", count: 35 }, { name: "외과", count: 69 },
+        { name: "정형외과", count: 37 }, { name: "신경외과", count: 33 }, { name: "심장혈관흉부외과", count: 26 }, { name: "성형외과", count: 10 },
+        { name: "마취통증의학과", count: 55 }, { name: "산부인과", count: 25 }, { name: "소아청소년과", count: 83 }, { name: "안과", count: 31 },
+        { name: "이비인후과", count: 17 }, { name: "피부과", count: 9 }, { name: "비뇨의학과", count: 13 }, { name: "영상의학과", count: 82 },
+        { name: "방사선종양학과", count: 11 }, { name: "병리과", count: 19 }, { name: "진단검사의학과", count: 15 }, { name: "재활의학과", count: 15 },
+        { name: "핵의학과", count: 6 }, { name: "가정의학과", count: 24 }, { name: "응급의학과", count: 22 }, { name: "예방의학과", count: 2 },
+        { name: "구강내과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "비대면진료 시범사업 진료기관(의료기관)", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "중증소아 단기입원서비스 시범기관", "응급의료기관", "성인 중환자실",
+        "소아 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "가정용 인공호흡기 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "중증소아 재택의료 시범기관",
+        "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관",
+        "심실 보조장치 치료술 실시기관(체외형&이식형)", "클립을 사용한 경피적 경도관 승모판 재건술 실시기관",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_07": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(06273) 서울특별시 강남구 언주로 211, 강남세브란스병원 (도곡동)",
+      phone: "02-2019-3114",
+      homepage: "https://gs.severance.healthcare",
+      beds: { generalHigh: 87, generalNormal: 562, icuAdult: 49, icuChild: 0, icuNeonatal: 28, psyOpenHigh: 2, psyOpenNormal: 18, psyCloseHigh: 0, psyCloseNormal: 0 },
+      facilities: { isolation: 21, sterile: 0, hospice: 1, delivery: 5, operating: 24, emergency: 28, physicalTherapy: 27, nursery: 5, roomingIn: 0, recovery: 23, hemodialysis: 24, brachytherapy: 0, radioiodine: 6 },
+      doctors: { total: 541, md: 487, dentist: 54, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 69 }, { name: "신경과", count: 16 }, { name: "정신건강의학과", count: 6 }, { name: "외과", count: 30 },
+        { name: "정형외과", count: 15 }, { name: "신경외과", count: 20 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 5 },
+        { name: "마취통증의학과", count: 28 }, { name: "산부인과", count: 9 }, { name: "소아청소년과", count: 21 }, { name: "안과", count: 12 },
+        { name: "이비인후과", count: 7 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 7 }, { name: "영상의학과", count: 40 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 7 }, { name: "진단검사의학과", count: 8 }, { name: "재활의학과", count: 8 },
+        { name: "핵의학과", count: 4 }, { name: "가정의학과", count: 14 }, { name: "응급의학과", count: 11 }, { name: "구강악안면외과", count: 3 },
+        { name: "치과보철과", count: 3 }, { name: "치과교정과", count: 3 }, { name: "치주과", count: 2 }, { name: "치과보존과", count: 3 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "측두하악관절자극요법 실시기관", "응급의료기관",
+        "성인 중환자실", "신생아 중환자실", "가정용 인공호흡기 환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "재활환자 재택관리 시범기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)", "제3차의료급여기관", "난임시술(인공)"
+      ]
+    },
+    "HOSP_08": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(03722) 서울특별시 서대문구 연세로 50-1, (신촌동)",
+      phone: "02-2228-0114",
+      homepage: "https://sev.severance.healthcare",
+      beds: { generalHigh: 256, generalNormal: 1567, icuAdult: 168, icuChild: 25, icuNeonatal: 52, psyOpenHigh: 7, psyOpenNormal: 20, psyCloseHigh: 4, psyCloseNormal: 25 },
+      facilities: { isolation: 44, sterile: 20, hospice: 1, delivery: 8, operating: 72, emergency: 57, physicalTherapy: 22, nursery: 10, roomingIn: 1, recovery: 42, hemodialysis: 42, brachytherapy: 1, radioiodine: 5 },
+      doctors: { total: 1431, md: 1431, dentist: 0, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 247 }, { name: "신경과", count: 27 }, { name: "정신건강의학과", count: 24 }, { name: "외과", count: 77 },
+        { name: "정형외과", count: 28 }, { name: "신경외과", count: 39 }, { name: "심장혈관흉부외과", count: 21 }, { name: "성형외과", count: 12 },
+        { name: "마취통증의학과", count: 77 }, { name: "산부인과", count: 27 }, { name: "소아청소년과", count: 76 }, { name: "안과", count: 26 },
+        { name: "이비인후과", count: 19 }, { name: "피부과", count: 9 }, { name: "비뇨의학과", count: 17 }, { name: "영상의학과", count: 78 },
+        { name: "방사선종양학과", count: 14 }, { name: "병리과", count: 16 }, { name: "진단검사의학과", count: 19 }, { name: "재활의학과", count: 14 },
+        { name: "핵의학과", count: 6 }, { name: "가정의학과", count: 11 }, { name: "응급의학과", count: 21 }, { name: "직업환경의학과", count: 3 },
+        { name: "예방의학과", count: 10 }
+      ],
+      specialAreas: [
+        "비대면진료 시범사업 진료기관(의료기관)", "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관",
+        "차세대염기서열분석 기반 유전자 패널검사 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "응급의료기관",
+        "성인 중환자실", "소아 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "가정용 인공호흡기 환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "중증소아 재택의료 시범기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(체외형&이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_09": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(07985) 서울특별시 양천구 안양천로 1071, (목동)",
+      phone: "02-2650-5114",
+      homepage: "https://mokdong.eumc.ac.kr",
+      beds: { generalHigh: 26, generalNormal: 528, icuAdult: 60, icuChild: 0, icuNeonatal: 30, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 10 },
+      facilities: { isolation: 9, sterile: 3, hospice: 1, delivery: 2, operating: 14, emergency: 33, physicalTherapy: 15, nursery: 15, roomingIn: 1, recovery: 10, hemodialysis: 24, brachytherapy: 1, radioiodine: 2 },
+      doctors: { total: 405, md: 383, dentist: 22, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 54 }, { name: "신경과", count: 12 }, { name: "정신건강의학과", count: 3 }, { name: "외과", count: 23 },
+        { name: "정형외과", count: 10 }, { name: "신경외과", count: 5 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 13 }, { name: "산부인과", count: 12 }, { name: "소아청소년과", count: 14 }, { name: "안과", count: 6 },
+        { name: "이비인후과", count: 7 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 10 }, { name: "영상의학과", count: 18 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 6 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 3 }, { name: "응급의학과", count: 17 }, { name: "직업환경의학과", count: 1 },
+        { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 2 }, { name: "치과교정과", count: 2 }, { name: "치주과", count: 2 },
+        { name: "치과보존과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정간호실시기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)"
+      ]
+    },
+    "HOSP_10": {
+      hospitalType: "상급종합",
+      founderType: "재단법인",
+      fullAddress: "(05505) 서울특별시 송파구 올림픽로43길 88, 서울아산병원 (풍납동)",
+      phone: "02-3010-3114",
+      homepage: "https://www.amc.seoul.kr",
+      beds: { generalHigh: 304, generalNormal: 1790, icuAdult: 189, icuChild: 30, icuNeonatal: 62, psyOpenHigh: 1, psyOpenNormal: 10, psyCloseHigh: 3, psyCloseNormal: 30 },
+      facilities: { isolation: 14, sterile: 19, hospice: 1, delivery: 4, operating: 81, emergency: 93, physicalTherapy: 32, nursery: 30, roomingIn: 1, recovery: 69, hemodialysis: 68, brachytherapy: 1, radioiodine: 4 },
+      doctors: { total: 1596, md: 1557, dentist: 39, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 296 }, { name: "신경과", count: 41 }, { name: "정신건강의학과", count: 16 }, { name: "외과", count: 140 },
+        { name: "정형외과", count: 39 }, { name: "신경외과", count: 35 }, { name: "심장혈관흉부외과", count: 44 }, { name: "성형외과", count: 16 },
+        { name: "마취통증의학과", count: 72 }, { name: "산부인과", count: 28 }, { name: "소아청소년과", count: 67 }, { name: "안과", count: 28 },
+        { name: "이비인후과", count: 22 }, { name: "피부과", count: 8 }, { name: "비뇨의학과", count: 20 }, { name: "영상의학과", count: 132 },
+        { name: "방사선종양학과", count: 13 }, { name: "병리과", count: 24 }, { name: "진단검사의학과", count: 19 }, { name: "재활의학과", count: 14 },
+        { name: "핵의학과", count: 9 }, { name: "가정의학과", count: 20 }, { name: "응급의학과", count: 18 }, { name: "예방의학과", count: 3 },
+        { name: "구강악안면외과", count: 4 }, { name: "치과보철과", count: 3 }, { name: "치과교정과", count: 2 }, { name: "소아치과", count: 2 },
+        { name: "치주과", count: 3 }, { name: "치과보존과", count: 2 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "인공와우 실시기관", "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실", "소아 중환자실", "신생아 중환자실",
+        "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관", "가정용 인공호흡기 환자 재택관리 시범기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "중증소아 재택의료 시범기관",
+        "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관",
+        "심실 보조장치 치료술 실시기관(체외형&이식형)", "클립을 사용한 경피적 경도관 승모판 재건술 실시기관",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_11": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(06973) 서울특별시 동작구 흑석로 102, (흑석동)",
+      phone: "1800-1114",
+      homepage: "https://ch.cauhs.or.kr",
+      beds: { generalHigh: 25, generalNormal: 552, icuAdult: 53, icuChild: 0, icuNeonatal: 25, psyOpenHigh: 0, psyOpenNormal: 10, psyCloseHigh: 0, psyCloseNormal: 24 },
+      facilities: { isolation: 47, sterile: 2, hospice: 1, delivery: 5, operating: 16, emergency: 31, physicalTherapy: 10, nursery: 8, roomingIn: 1, recovery: 12, hemodialysis: 26, brachytherapy: 0, radioiodine: 4 },
+      doctors: { total: 388, md: 380, dentist: 8, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 68 }, { name: "신경과", count: 10 }, { name: "정신건강의학과", count: 4 }, { name: "외과", count: 15 },
+        { name: "정형외과", count: 11 }, { name: "신경외과", count: 8 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 11 }, { name: "산부인과", count: 8 }, { name: "소아청소년과", count: 13 }, { name: "안과", count: 5 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 5 }, { name: "비뇨의학과", count: 8 }, { name: "영상의학과", count: 21 },
+        { name: "방사선종양학과", count: 1 }, { name: "병리과", count: 6 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 1 }, { name: "가정의학과", count: 6 }, { name: "응급의학과", count: 4 }, { name: "구강악안면외과", count: 3 },
+        { name: "치과보철과", count: 1 }, { name: "치과교정과", count: 2 }, { name: "치주과", count: 1 }, { name: "치과보존과", count: 1 }
+      ],
+      specialAreas: [
+        "비대면진료 시범사업 진료기관(의료기관)", "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관",
+        "차세대염기서열분석 기반 유전자 패널검사 실시기관", "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정간호실시기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_12": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(02841) 서울특별시 성북구 고려대로 73, 고려대병원 (안암동5가)",
+      phone: "1577-0083",
+      homepage: "https://anam.kumc.or.kr",
+      beds: { generalHigh: 37, generalNormal: 787, icuAdult: 72, icuChild: 0, icuNeonatal: 20, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 10 },
+      facilities: { isolation: 14, sterile: 19, hospice: 1, delivery: 2, operating: 25, emergency: 43, physicalTherapy: 11, nursery: 4, roomingIn: 1, recovery: 12, hemodialysis: 34, brachytherapy: 0, radioiodine: 1 },
+      doctors: { total: 567, md: 541, dentist: 26, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 97 }, { name: "신경과", count: 13 }, { name: "정신건강의학과", count: 9 }, { name: "외과", count: 29 },
+        { name: "정형외과", count: 16 }, { name: "신경외과", count: 15 }, { name: "심장혈관흉부외과", count: 9 }, { name: "성형외과", count: 6 },
+        { name: "마취통증의학과", count: 20 }, { name: "산부인과", count: 14 }, { name: "소아청소년과", count: 25 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 9 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 7 }, { name: "영상의학과", count: 37 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 10 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 7 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 11 }, { name: "응급의학과", count: 12 }, { name: "구강악안면외과", count: 3 },
+        { name: "치과보철과", count: 3 }, { name: "치과교정과", count: 2 }, { name: "치주과", count: 1 }, { name: "치과보존과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관",
+        "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_13": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(06591) 서울특별시 서초구 반포대로 222, (반포동)",
+      phone: "02-1588-1511",
+      homepage: "https://www.cmcseoul.or.kr",
+      beds: { generalHigh: 159, generalNormal: 859, icuAdult: 104, icuChild: 5, icuNeonatal: 50, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 3, psyCloseNormal: 32 },
+      facilities: { isolation: 10, sterile: 46, hospice: 1, delivery: 2, operating: 33, emergency: 43, physicalTherapy: 17, nursery: 10, roomingIn: 1, recovery: 20, hemodialysis: 33, brachytherapy: 1, radioiodine: 3 },
+      doctors: { total: 860, md: 827, dentist: 33, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 147 }, { name: "신경과", count: 13 }, { name: "정신건강의학과", count: 12 }, { name: "외과", count: 47 },
+        { name: "정형외과", count: 23 }, { name: "신경외과", count: 16 }, { name: "심장혈관흉부외과", count: 10 }, { name: "성형외과", count: 6 },
+        { name: "마취통증의학과", count: 31 }, { name: "산부인과", count: 20 }, { name: "소아청소년과", count: 53 }, { name: "안과", count: 30 },
+        { name: "이비인후과", count: 14 }, { name: "피부과", count: 6 }, { name: "비뇨의학과", count: 11 }, { name: "영상의학과", count: 57 },
+        { name: "방사선종양학과", count: 8 }, { name: "병리과", count: 17 }, { name: "진단검사의학과", count: 13 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 6 }, { name: "가정의학과", count: 16 }, { name: "응급의학과", count: 12 }, { name: "직업환경의학과", count: 7 },
+        { name: "예방의학과", count: 2 }, { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 2 }, { name: "치과교정과", count: 3 },
+        { name: "치주과", count: 2 }, { name: "치과보존과", count: 3 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "소아 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관",
+        "가정간호실시기관", "가정형 호스피스전문기관", "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관",
+        "입원형 호스피스전문기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_14": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(04763) 서울특별시 성동구 왕십리로 222-1, (사근동)",
+      phone: "02-2290-8114",
+      homepage: "https://seoul.hyumc.com",
+      beds: { generalHigh: 24, generalNormal: 625, icuAdult: 64, icuChild: 0, icuNeonatal: 25, psyOpenHigh: 0, psyOpenNormal: 17, psyCloseHigh: 0, psyCloseNormal: 16 },
+      facilities: { isolation: 20, sterile: 10, hospice: 1, delivery: 3, operating: 16, emergency: 34, physicalTherapy: 14, nursery: 4, roomingIn: 1, recovery: 12, hemodialysis: 40, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 417, md: 404, dentist: 13, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 61 }, { name: "신경과", count: 18 }, { name: "정신건강의학과", count: 4 }, { name: "외과", count: 13 },
+        { name: "정형외과", count: 10 }, { name: "신경외과", count: 7 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 5 },
+        { name: "마취통증의학과", count: 13 }, { name: "산부인과", count: 8 }, { name: "소아청소년과", count: 17 }, { name: "안과", count: 8 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 17 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 4 }, { name: "진단검사의학과", count: 7 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 4 }, { name: "응급의학과", count: 13 }, { name: "직업환경의학과", count: 4 },
+        { name: "구강악안면외과", count: 2 }, { name: "치과보철과", count: 1 }, { name: "치과교정과", count: 1 }, { name: "치주과", count: 1 },
+        { name: "치과보존과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정간호실시기관", "복막투석 환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "경피적 좌심방이 폐색술 실시기관",
+        "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
     "HOSP_15": {
       hospitalType: "상급종합",
       founderType: "학교법인",
       fullAddress: "(21431) 인천광역시 부평구 동수로 56, 가톨릭대학교인천성모병원",
       phone: "032-1544-9004",
-      homepage: "http://www.cmcism.or.kr/",
-      beds: {
-        generalHigh: 19,
-        generalNormal: 575,
-        icuAdult: 79,
-        icuChild: 0,
-        icuNeonatal: 13,
-        psyOpenHigh: 0,
-        psyOpenNormal: 20,
-        psyCloseHigh: 0,
-        psyCloseNormal: 0
-      },
-      facilities: {
-        isolation: 9,
-        sterile: 10,
-        hospice: 1,
-        delivery: 1,
-        operating: 17,
-        emergency: 32,
-        physicalTherapy: 26,
-        nursery: 5,
-        roomingIn: 0,
-        recovery: 13,
-        hemodialysis: 42,
-        brachytherapy: 0,
-        radioiodine: 2
-      },
-      doctors: {
-        total: 339,
-        md: 336,
-        dentist: 3,
-        koreanMed: 0
-      },
+      homepage: "https://www.cmcism.or.kr",
+      beds: { generalHigh: 19, generalNormal: 575, icuAdult: 79, icuChild: 0, icuNeonatal: 13, psyOpenHigh: 0, psyOpenNormal: 20, psyCloseHigh: 0, psyCloseNormal: 0 },
+      facilities: { isolation: 9, sterile: 10, hospice: 1, delivery: 1, operating: 17, emergency: 32, physicalTherapy: 26, nursery: 5, roomingIn: 0, recovery: 13, hemodialysis: 42, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 339, md: 336, dentist: 3, koreanMed: 0 },
       specialties: [
-        { name: "내과", count: 63 },
-        { name: "신경과", count: 8 },
-        { name: "정신건강의학과", count: 5 },
-        { name: "외과", count: 28 },
-        { name: "정형외과", count: 11 },
-        { name: "신경외과", count: 15 },
-        { name: "심장혈관흉부외과", count: 5 },
-        { name: "성형외과", count: 4 },
-        { name: "마취통증의학과", count: 12 },
-        { name: "산부인과", count: 6 },
-        { name: "소아청소년과", count: 15 },
-        { name: "안과", count: 5 },
-        { name: "이비인후과", count: 5 },
-        { name: "피부과", count: 3 },
-        { name: "비뇨의학과", count: 3 },
-        { name: "영상의학과", count: 18 },
-        { name: "방사선종양학과", count: 4 },
-        { name: "병리과", count: 7 },
-        { name: "진단검사의학과", count: 3 },
-        { name: "재활의학과", count: 4 },
-        { name: "핵의학과", count: 2 },
-        { name: "응급의학과", count: 15 },
-        { name: "구강악안면외과", count: 2 },
-        { name: "치주과", count: 1 }
+        { name: "내과", count: 63 }, { name: "신경과", count: 8 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 28 },
+        { name: "정형외과", count: 11 }, { name: "신경외과", count: 15 }, { name: "심장혈관흉부외과", count: 5 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 12 }, { name: "산부인과", count: 6 }, { name: "소아청소년과", count: 15 }, { name: "안과", count: 5 },
+        { name: "이비인후과", count: 5 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 3 }, { name: "영상의학과", count: 18 },
+        { name: "방사선종양학과", count: 4 }, { name: "병리과", count: 7 }, { name: "진단검사의학과", count: 3 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 2 }, { name: "응급의학과", count: 15 }, { name: "구강악안면외과", count: 2 }, { name: "치주과", count: 1 }
       ],
       specialAreas: [
-        "간호간병통합서비스 제공기관",
-        "HPV 국가예방접종사업 참여기관",
-        "차세대염기서열분석 기반 유전자 패널검사 실시기관",
-        "상급종합병원 심층진찰 시범기관",
-        "수면다원검사 실시기관",
-        "신속대응시스템 시범기관",
-        "인공와우 실시기관",
-        "조혈모세포이식 실시기관",
-        "응급의료기관",
-        "성인 중환자실",
-        "신생아 중환자실",
-        "1형 당뇨병 환자 재택관리 시범기관",
-        "가정간호실시기관",
-        "가정용 인공호흡기 환자 재택관리 시범기관",
-        "가정형 호스피스전문기관",
-        "결핵환자 재택관리 시범기관",
-        "복막투석 환자 재택관리 시범기관",
-        "심장질환자 재택관리 시범기관",
-        "암환자(장루) 재택관리 시범기관",
-        "재활환자 재택관리 시범기관",
-        "입원형 호스피스전문기관",
-        "자문형 호스피스전문기관",
-        "경피적 대동맥판삽입 실시기관",
-        "제3차의료급여기관"
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관",
+        "가정간호실시기관", "가정용 인공호흡기 환자 재택관리 시범기관", "가정형 호스피스전문기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관",
+        "재활환자 재택관리 시범기관", "입원형 호스피스전문기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "제3차의료급여기관"
       ]
     },
-
+    "HOSP_16": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(14584) 경기도 부천시 원미구 조마루로 170, 부흥로 173(1층일부) (중동)",
+      phone: "032-621-5114",
+      homepage: "https://www.schmc.ac.kr/bucheon",
+      beds: { generalHigh: 43, generalNormal: 637, icuAdult: 84, icuChild: 0, icuNeonatal: 24, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 0 },
+      facilities: { isolation: 25, sterile: 9, hospice: 1, delivery: 6, operating: 20, emergency: 34, physicalTherapy: 7, nursery: 8, roomingIn: 1, recovery: 13, hemodialysis: 39, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 360, md: 353, dentist: 7, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 66 }, { name: "신경과", count: 9 }, { name: "정신건강의학과", count: 4 }, { name: "외과", count: 20 },
+        { name: "정형외과", count: 8 }, { name: "신경외과", count: 7 }, { name: "심장혈관흉부외과", count: 2 }, { name: "성형외과", count: 7 },
+        { name: "마취통증의학과", count: 15 }, { name: "산부인과", count: 8 }, { name: "소아청소년과", count: 16 }, { name: "안과", count: 6 },
+        { name: "이비인후과", count: 4 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 4 }, { name: "영상의학과", count: 15 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 7 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 4 }, { name: "가정의학과", count: 7 }, { name: "응급의학과", count: 17 }, { name: "구강악안면외과", count: 2 },
+        { name: "치과보철과", count: 1 }, { name: "치과교정과", count: 1 }, { name: "치과보존과", count: 1 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정용 인공호흡기 환자 재택관리 시범기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관"
+      ]
+    },
+    "HOSP_17": {
+      hospitalType: "상급종합",
+      founderType: "의료법인",
+      fullAddress: "(21565) 인천광역시 남동구 남동대로774번길 21, 의료법인길의료재단길병원",
+      phone: "1577-2299",
+      homepage: "https://www.gilhospital.com",
+      beds: { generalHigh: 47, generalNormal: 938, icuAdult: 126, icuChild: 0, icuNeonatal: 30, psyOpenHigh: 0, psyOpenNormal: 4, psyCloseHigh: 0, psyCloseNormal: 18 },
+      facilities: { isolation: 88, sterile: 15, hospice: 2, delivery: 4, operating: 30, emergency: 47, physicalTherapy: 20, nursery: 4, roomingIn: 1, recovery: 15, hemodialysis: 67, brachytherapy: 1, radioiodine: 2 },
+      doctors: { total: 475, md: 447, dentist: 28, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 78 }, { name: "신경과", count: 9 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 40 },
+        { name: "정형외과", count: 11 }, { name: "신경외과", count: 15 }, { name: "심장혈관흉부외과", count: 9 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 12 }, { name: "산부인과", count: 10 }, { name: "소아청소년과", count: 16 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 10 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 7 }, { name: "영상의학과", count: 14 },
+        { name: "방사선종양학과", count: 4 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 5 }, { name: "가정의학과", count: 6 }, { name: "응급의학과", count: 23 }, { name: "직업환경의학과", count: 2 },
+        { name: "예방의학과", count: 1 }, { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 1 }, { name: "치과교정과", count: 2 },
+        { name: "치주과", count: 1 }, { name: "치과보존과", count: 2 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "가정용 인공호흡기 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "입원형 호스피스전문기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_18": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(22332) 인천광역시 제물포구 인항로 27, 인하대학병원",
+      phone: "032-890-2114",
+      homepage: "https://www.inha.com",
+      beds: { generalHigh: 23, generalNormal: 686, icuAdult: 91, icuChild: 5, icuNeonatal: 26, psyOpenHigh: 0, psyOpenNormal: 5, psyCloseHigh: 0, psyCloseNormal: 15 },
+      facilities: { isolation: 7, sterile: 2, hospice: 1, delivery: 9, operating: 16, emergency: 34, physicalTherapy: 27, nursery: 10, roomingIn: 1, recovery: 12, hemodialysis: 30, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 401, md: 396, dentist: 5, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 66 }, { name: "신경과", count: 10 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 20 },
+        { name: "정형외과", count: 11 }, { name: "신경외과", count: 7 }, { name: "심장혈관흉부외과", count: 3 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 13 }, { name: "산부인과", count: 13 }, { name: "소아청소년과", count: 32 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 4 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 7 }, { name: "영상의학과", count: 15 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 4 }, { name: "진단검사의학과", count: 5 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 3 }, { name: "응급의학과", count: 20 }, { name: "직업환경의학과", count: 3 },
+        { name: "예방의학과", count: 2 }, { name: "구강악안면외과", count: 1 }, { name: "치과보철과", count: 1 }, { name: "구강내과", count: 1 },
+        { name: "통합치의학과", count: 2 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "소아 중환자실",
+        "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관", "가정용 인공호흡기 환자 재택관리 시범기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "입원형 호스피스전문기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
     "HOSP_19": {
       hospitalType: "상급종합",
       founderType: "학교법인",
       fullAddress: "(16247) 경기도 수원시 팔달구 중부대로 93, (지동)",
       phone: "031-1577-8588",
-      homepage: "http://www.cmcvincent.or.kr/skip.html",
-      beds: {
-        generalHigh: 50,
-        generalNormal: 607,
-        icuAdult: 73,
-        icuChild: 0,
-        icuNeonatal: 18,
-        psyOpenHigh: 0,
-        psyOpenNormal: 0,
-        psyCloseHigh: 0,
-        psyCloseNormal: 30
-      },
-      facilities: {
-        isolation: 11,
-        sterile: 6,
-        hospice: 1,
-        delivery: 2,
-        operating: 20,
-        emergency: 45,
-        physicalTherapy: 13,
-        nursery: 6,
-        roomingIn: "보유",
-        recovery: 11,
-        hemodialysis: 31,
-        brachytherapy: 1,
-        radioiodine: 1
-      },
-      doctors: {
-        total: 360,
-        md: 355,
-        dentist: 5,
-        koreanMed: 0
-      },
+      homepage: "https://www.cmcvincent.or.kr",
+      beds: { generalHigh: 50, generalNormal: 607, icuAdult: 73, icuChild: 0, icuNeonatal: 18, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 30 },
+      facilities: { isolation: 11, sterile: 6, hospice: 1, delivery: 2, operating: 20, emergency: 45, physicalTherapy: 13, nursery: 6, roomingIn: 1, recovery: 11, hemodialysis: 31, brachytherapy: 1, radioiodine: 1 },
+      doctors: { total: 360, md: 355, dentist: 5, koreanMed: 0 },
       specialties: [
-        { name: "내과", count: 64 },
-        { name: "신경과", count: 8 },
-        { name: "정신건강의학과", count: 6 },
-        { name: "외과", count: 18 },
-        { name: "정형외과", count: 11 },
-        { name: "신경외과", count: 11 },
-        { name: "심장혈관흉부외과", count: 7 },
-        { name: "성형외과", count: 5 },
-        { name: "마취통증의학과", count: 12 },
-        { name: "산부인과", count: 9 },
-        { name: "소아청소년과", count: 15 },
-        { name: "안과", count: 5 },
-        { name: "이비인후과", count: 7 },
-        { name: "피부과", count: 3 },
-        { name: "비뇨의학과", count: 6 },
-        { name: "영상의학과", count: 15 },
-        { name: "방사선종양학과", count: 4 },
-        { name: "병리과", count: 7 },
-        { name: "진단검사의학과", count: 4 },
-        { name: "재활의학과", count: 3 },
-        { name: "핵의학과", count: 3 },
-        { name: "가정의학과", count: 12 },
-        { name: "응급의학과", count: 13 },
-        { name: "구강악안면외과", count: 1 },
-        { name: "치과보철과", count: 1 },
-        { name: "치과교정과", count: 1 },
-        { name: "치과보존과", count: 1 },
+        { name: "내과", count: 64 }, { name: "신경과", count: 8 }, { name: "정신건강의학과", count: 6 }, { name: "외과", count: 18 },
+        { name: "정형외과", count: 11 }, { name: "신경외과", count: 11 }, { name: "심장혈관흉부외과", count: 7 }, { name: "성형외과", count: 5 },
+        { name: "마취통증의학과", count: 12 }, { name: "산부인과", count: 9 }, { name: "소아청소년과", count: 15 }, { name: "안과", count: 5 },
+        { name: "이비인후과", count: 7 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 15 },
+        { name: "방사선종양학과", count: 4 }, { name: "병리과", count: 7 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 12 }, { name: "응급의학과", count: 13 }, { name: "구강악안면외과", count: 1 },
+        { name: "치과보철과", count: 1 }, { name: "치과교정과", count: 1 }, { name: "치과보존과", count: 1 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "인공와우 실시기관", "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실",
+        "가정간호실시기관", "가정형 호스피스전문기관", "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "입원형 호스피스전문기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_20": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(15355) 경기도 안산시 단원구 적금로 123, (고잔동)",
+      phone: "031-1577-7516",
+      homepage: "https://ansan.kumc.or.kr",
+      beds: { generalHigh: 17, generalNormal: 622, icuAdult: 62, icuChild: 0, icuNeonatal: 25, psyOpenHigh: 0, psyOpenNormal: 14, psyCloseHigh: 1, psyCloseNormal: 15 },
+      facilities: { isolation: 14, sterile: 8, hospice: 1, delivery: 8, operating: 20, emergency: 34, physicalTherapy: 9, nursery: 3, roomingIn: 0, recovery: 13, hemodialysis: 29, brachytherapy: 0, radioiodine: 1 },
+      doctors: { total: 371, md: 365, dentist: 6, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 62 }, { name: "신경과", count: 7 }, { name: "정신건강의학과", count: 7 }, { name: "외과", count: 19 },
+        { name: "정형외과", count: 10 }, { name: "신경외과", count: 8 }, { name: "심장혈관흉부외과", count: 3 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 12 }, { name: "산부인과", count: 8 }, { name: "소아청소년과", count: 21 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 7 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 24 },
+        { name: "방사선종양학과", count: 4 }, { name: "병리과", count: 7 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 8 }, { name: "응급의학과", count: 11 }, { name: "직업환경의학과", count: 4 },
+        { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 1 }, { name: "치과보존과", count: 2 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(체외형&이식형)",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)"
+      ]
+    },
+    "HOSP_21": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(13620) 경기도 성남시 분당구 구미로173번길 82, (구미동, 분당서울대학교병원)",
+      phone: "031-787-2114",
+      homepage: "https://www.snubh.org",
+      beds: { generalHigh: 57, generalNormal: 974, icuAdult: 88, icuChild: 6, icuNeonatal: 50, psyOpenHigh: 2, psyOpenNormal: 24, psyCloseHigh: 1, psyCloseNormal: 14 },
+      facilities: { isolation: 10, sterile: 18, hospice: 1, delivery: 4, operating: 39, emergency: 42, physicalTherapy: 13, nursery: 20, roomingIn: 1, recovery: 42, hemodialysis: 31, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 809, md: 776, dentist: 33, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 152 }, { name: "신경과", count: 32 }, { name: "정신건강의학과", count: 20 }, { name: "외과", count: 42 },
+        { name: "정형외과", count: 34 }, { name: "신경외과", count: 25 }, { name: "심장혈관흉부외과", count: 19 }, { name: "성형외과", count: 9 },
+        { name: "마취통증의학과", count: 36 }, { name: "산부인과", count: 15 }, { name: "소아청소년과", count: 28 }, { name: "안과", count: 26 },
+        { name: "이비인후과", count: 11 }, { name: "피부과", count: 8 }, { name: "비뇨의학과", count: 10 }, { name: "영상의학과", count: 57 },
+        { name: "방사선종양학과", count: 6 }, { name: "병리과", count: 15 }, { name: "진단검사의학과", count: 11 }, { name: "재활의학과", count: 11 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 11 }, { name: "응급의학과", count: 18 }, { name: "예방의학과", count: 2 },
+        { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 2 }, { name: "치과교정과", count: 3 }, { name: "치주과", count: 3 },
+        { name: "치과보존과", count: 2 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "비대면진료 시범사업 진료기관(의료기관)", "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관",
+        "차세대염기서열분석 기반 유전자 패널검사 실시기관", "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "소아 중환자실",
+        "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관", "가정용 인공호흡기 환자 재택관리 시범기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "중증소아 재택의료 시범기관", "장애인 건강 주치의 시범기관(방문진료 실시기관)", "자문형 호스피스전문기관",
+        "장애인 건강 주치의 시범기관(전체)", "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관",
+        "심실 보조장치 치료술 실시기관(체외형&이식형)", "클립을 사용한 경피적 경도관 승모판 재건술 실시기관",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_22": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(16499) 경기도 수원시 영통구 월드컵로 164, (원천동)",
+      phone: "031-219-5114",
+      homepage: "https://hosp.ajoumc.or.kr",
+      beds: { generalHigh: 52, generalNormal: 833, icuAdult: 124, icuChild: 0, icuNeonatal: 36, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 20 },
+      facilities: { isolation: 24, sterile: 2, hospice: 1, delivery: 2, operating: 32, emergency: 52, physicalTherapy: 10, nursery: 12, roomingIn: 1, recovery: 21, hemodialysis: 32, brachytherapy: 0, radioiodine: 3 },
+      doctors: { total: 647, md: 609, dentist: 38, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 99 }, { name: "신경과", count: 17 }, { name: "정신건강의학과", count: 8 }, { name: "외과", count: 42 },
+        { name: "정형외과", count: 23 }, { name: "신경외과", count: 9 }, { name: "심장혈관흉부외과", count: 10 }, { name: "성형외과", count: 6 },
+        { name: "마취통증의학과", count: 21 }, { name: "산부인과", count: 14 }, { name: "소아청소년과", count: 36 }, { name: "안과", count: 13 },
+        { name: "이비인후과", count: 8 }, { name: "피부과", count: 5 }, { name: "비뇨의학과", count: 7 }, { name: "영상의학과", count: 27 },
+        { name: "방사선종양학과", count: 7 }, { name: "병리과", count: 9 }, { name: "진단검사의학과", count: 5 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 4 }, { name: "가정의학과", count: 15 }, { name: "응급의학과", count: 17 }, { name: "직업환경의학과", count: 4 },
+        { name: "예방의학과", count: 5 }, { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 2 }, { name: "치과교정과", count: 3 },
+        { name: "소아치과", count: 1 }, { name: "치주과", count: 2 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관", "개방병원",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "가정형 호스피스전문기관", "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "입원형 호스피스전문기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_23": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(14068) 경기도 안양시 동안구 관평로170번길 22, (평촌동)",
+      phone: "031-380-1500",
+      homepage: "https://hallym.hallym.or.kr",
+      beds: { generalHigh: 10, generalNormal: 660, icuAdult: 92, icuChild: 0, icuNeonatal: 12, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 20 },
+      facilities: { isolation: 14, sterile: 2, hospice: 1, delivery: 2, operating: 18, emergency: 44, physicalTherapy: 15, nursery: 5, roomingIn: 0, recovery: 11, hemodialysis: 71, brachytherapy: 0, radioiodine: 0 },
+      doctors: { total: 352, md: 332, dentist: 20, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 59 }, { name: "신경과", count: 10 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 12 },
+        { name: "정형외과", count: 12 }, { name: "신경외과", count: 5 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 13 }, { name: "산부인과", count: 4 }, { name: "소아청소년과", count: 15 }, { name: "안과", count: 6 },
+        { name: "이비인후과", count: 4 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 20 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 2 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 7 }, { name: "응급의학과", count: 13 }, { name: "구강악안면외과", count: 4 },
+        { name: "치과보철과", count: 2 }, { name: "치과교정과", count: 1 }, { name: "치과보존과", count: 1 }, { name: "영상치의학과", count: 1 },
         { name: "통합치의학과", count: 1 }
       ],
       specialAreas: [
-        "간호간병통합서비스 제공기관",
-        "HPV 국가예방접종사업 참여기관",
-        "차세대염기서열분석 기반 유전자 패널검사 실시기관",
-        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관",
-        "상급종합병원 심층진찰 시범기관",
-        "수면다원검사 실시기관",
-        "인공와우 실시기관",
-        "조혈모세포이식 실시기관",
-        "응급의료기관",
-        "성인 중환자실",
-        "신생아 중환자실",
-        "가정간호실시기관",
-        "가정형 호스피스전문기관",
-        "결핵환자 재택관리 시범기관",
-        "복막투석 환자 재택관리 시범기관",
-        "심장질환자 재택관리 시범기관",
-        "암환자(장루) 재택관리 시범기관",
-        "입원형 호스피스전문기관",
-        "자문형 호스피스전문기관",
-        "경피적 대동맥판삽입 실시기관",
-        "경피적 좌심방이 폐색술 실시기관",
-        "제3차의료급여기관",
-        "(정신질환)병원기반 시범기관"
+        "비대면진료 시범사업 진료기관(의료기관)", "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관",
+        "차세대염기서열분석 기반 유전자 패널검사 실시기관", "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실",
+        "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관", "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "심장질환자 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "경피적 대동맥판삽입 실시기관", "심실 보조장치 치료술 실시기관(이식형)", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_24": {
+      hospitalType: "상급종합",
+      founderType: "재단법인",
+      fullAddress: "(25440) 강원특별자치도 강릉시 사천면 방동길 38, 강릉아산병원",
+      phone: "033-610-3114",
+      homepage: "https://www.gnah.co.kr",
+      beds: { generalHigh: 41, generalNormal: 581, icuAdult: 55, icuChild: 0, icuNeonatal: 13, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 0 },
+      facilities: { isolation: 19, sterile: 0, hospice: 1, delivery: 5, operating: 15, emergency: 31, physicalTherapy: 11, nursery: 15, roomingIn: 1, recovery: 9, hemodialysis: 34, brachytherapy: 0, radioiodine: 0 },
+      doctors: { total: 239, md: 237, dentist: 2, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 40 }, { name: "신경과", count: 5 }, { name: "정신건강의학과", count: 2 }, { name: "외과", count: 12 },
+        { name: "정형외과", count: 10 }, { name: "신경외과", count: 5 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 1 },
+        { name: "마취통증의학과", count: 9 }, { name: "산부인과", count: 6 }, { name: "소아청소년과", count: 8 }, { name: "안과", count: 3 },
+        { name: "이비인후과", count: 4 }, { name: "피부과", count: 1 }, { name: "비뇨의학과", count: 4 }, { name: "영상의학과", count: 14 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 3 }, { name: "진단검사의학과", count: 3 }, { name: "재활의학과", count: 2 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 5 }, { name: "응급의학과", count: 10 }, { name: "구강악안면외과", count: 1 },
+        { name: "치과보철과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "재활환자 재택관리 시범기관", "경피적 대동맥판삽입 실시기관", "제3차의료급여기관"
+      ]
+    },
+    "HOSP_25": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(26426) 강원특별자치도 원주시 일산로 20, (일산동)",
+      phone: "033-741-0114",
+      homepage: "https://www.ywmc.or.kr",
+      beds: { generalHigh: 37, generalNormal: 609, icuAdult: 89, icuChild: 0, icuNeonatal: 22, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 24 },
+      facilities: { isolation: 40, sterile: 4, hospice: 1, delivery: 2, operating: 17, emergency: 43, physicalTherapy: 17, nursery: 5, roomingIn: 0, recovery: 10, hemodialysis: 33, brachytherapy: 0, radioiodine: 1 },
+      doctors: { total: 405, md: 387, dentist: 18, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 58 }, { name: "신경과", count: 9 }, { name: "정신건강의학과", count: 6 }, { name: "외과", count: 21 },
+        { name: "정형외과", count: 10 }, { name: "신경외과", count: 6 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 12 }, { name: "산부인과", count: 6 }, { name: "소아청소년과", count: 12 }, { name: "안과", count: 3 },
+        { name: "이비인후과", count: 8 }, { name: "피부과", count: 5 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 13 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 4 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 1 }, { name: "가정의학과", count: 5 }, { name: "응급의학과", count: 18 }, { name: "직업환경의학과", count: 4 },
+        { name: "예방의학과", count: 3 }, { name: "구강악안면외과", count: 2 }, { name: "치과보철과", count: 1 }, { name: "치과교정과", count: 2 },
+        { name: "소아치과", count: 1 }, { name: "치과보존과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실",
+        "신생아 중환자실", "가정간호실시기관", "가정용 인공호흡기 환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "클립을 사용한 경피적 경도관 승모판 재건술 실시기관",
+        "보훈위탁진료요양기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반·낮병동 시범기관"
+      ]
+    },
+    "HOSP_26": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(28644) 충청북도 청주시 서원구 1순환로 776, 충북대학교병원",
+      phone: "043-269-6114",
+      homepage: "https://www.cbnuh.or.kr",
+      beds: { generalHigh: 33, generalNormal: 611, icuAdult: 78, icuChild: 0, icuNeonatal: 25, psyOpenHigh: 0, psyOpenNormal: 2, psyCloseHigh: 1, psyCloseNormal: 18 },
+      facilities: { isolation: 63, sterile: 15, hospice: 1, delivery: 2, operating: 18, emergency: 49, physicalTherapy: 22, nursery: 5, roomingIn: 0, recovery: 6, hemodialysis: 31, brachytherapy: 0, radioiodine: 0 },
+      doctors: { total: 323, md: 318, dentist: 5, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 44 }, { name: "신경과", count: 7 }, { name: "정신건강의학과", count: 6 }, { name: "외과", count: 11 },
+        { name: "정형외과", count: 9 }, { name: "신경외과", count: 9 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 2 },
+        { name: "마취통증의학과", count: 9 }, { name: "산부인과", count: 7 }, { name: "소아청소년과", count: 19 }, { name: "안과", count: 5 },
+        { name: "이비인후과", count: 5 }, { name: "피부과", count: 2 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 10 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 4 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 4 }, { name: "응급의학과", count: 6 }, { name: "직업환경의학과", count: 3 },
+        { name: "예방의학과", count: 2 }, { name: "구강악안면외과", count: 2 }, { name: "치과보철과", count: 1 }, { name: "치과보존과", count: 1 },
+        { name: "통합치의학과", count: 3 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "조혈모세포이식 실시기관",
+        "중증소아 단기입원서비스 시범기관", "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실",
+        "신생아 중환자실", "가정형 호스피스전문기관", "복막투석 환자 재택관리 시범기관", "입원형 호스피스전문기관",
+        "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관", "외국인 근로자 등 의료지원 사업시행 의료기관",
+        "제3차의료급여기관", "난임시술(인공)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_27": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(31116) 충청남도 천안시 동남구 망향로 201, (안서동)",
+      phone: "041-1588-0063",
+      homepage: "https://www.dkuh.co.kr",
+      beds: { generalHigh: 62, generalNormal: 732, icuAdult: 67, icuChild: 0, icuNeonatal: 25, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 20 },
+      facilities: { isolation: 15, sterile: 0, hospice: 1, delivery: 3, operating: 15, emergency: 34, physicalTherapy: 15, nursery: 15, roomingIn: 0, recovery: 11, hemodialysis: 25, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 327, md: 327, dentist: 0, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 56 }, { name: "신경과", count: 8 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 25 },
+        { name: "정형외과", count: 11 }, { name: "신경외과", count: 7 }, { name: "심장혈관흉부외과", count: 7 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 8 }, { name: "산부인과", count: 4 }, { name: "소아청소년과", count: 12 }, { name: "안과", count: 5 },
+        { name: "이비인후과", count: 8 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 2 }, { name: "영상의학과", count: 10 },
+        { name: "방사선종양학과", count: 4 }, { name: "병리과", count: 3 }, { name: "진단검사의학과", count: 3 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 7 }, { name: "응급의학과", count: 10 }, { name: "직업환경의학과", count: 3 },
+        { name: "예방의학과", count: 3 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관", "수면다원검사 실시기관",
+        "신속대응시스템 시범기관", "인공와우 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실",
+        "1형 당뇨병 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "입원형 호스피스전문기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_28": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(35015) 대전광역시 중구 문화로 282, (대사동)",
+      phone: "042-1599-7123",
+      homepage: "https://www.cnuh.co.kr",
+      beds: { generalHigh: 62, generalNormal: 941, icuAdult: 84, icuChild: 5, icuNeonatal: 34, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 26 },
+      facilities: { isolation: 14, sterile: 19, hospice: 1, delivery: 5, operating: 30, emergency: 39, physicalTherapy: 63, nursery: 10, roomingIn: 0, recovery: 26, hemodialysis: 48, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 503, md: 500, dentist: 3, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 72 }, { name: "신경과", count: 13 }, { name: "정신건강의학과", count: 4 }, { name: "외과", count: 18 },
+        { name: "정형외과", count: 9 }, { name: "신경외과", count: 10 }, { name: "심장혈관흉부외과", count: 9 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 15 }, { name: "산부인과", count: 10 }, { name: "소아청소년과", count: 22 }, { name: "안과", count: 8 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 11 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 6 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 4 }, { name: "응급의학과", count: 13 }, { name: "예방의학과", count: 2 },
+        { name: "구강악안면외과", count: 2 }, { name: "치과보철과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "소아 중환자실", "신생아 중환자실",
+        "가정간호실시기관", "가정용 인공호흡기 환자 재택관리 시범기관", "가정형 호스피스전문기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "입원형 호스피스전문기관", "자문형 호스피스전문기관", "장애인 건강 주치의 시범기관(전체)",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "외국인 근로자 등 의료지원 사업시행 의료기관",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반·낮병동 시범기관"
+      ]
+    },
+    "HOSP_29": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(35365) 대전광역시 서구 관저동로 158, (관저동)",
+      phone: "042-600-9999",
+      homepage: "https://www.kyuh.ac.kr",
+      beds: { generalHigh: 107, generalNormal: 577, icuAdult: 84, icuChild: 0, icuNeonatal: 24, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 2, psyCloseNormal: 18 },
+      facilities: { isolation: 5, sterile: 0, hospice: 2, delivery: 1, operating: 20, emergency: 34, physicalTherapy: 39, nursery: 10, roomingIn: 1, recovery: 10, hemodialysis: 60, brachytherapy: 0, radioiodine: 1 },
+      doctors: { total: 284, md: 280, dentist: 4, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 42 }, { name: "신경과", count: 6 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 15 },
+        { name: "정형외과", count: 8 }, { name: "신경외과", count: 5 }, { name: "심장혈관흉부외과", count: 7 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 9 }, { name: "산부인과", count: 6 }, { name: "소아청소년과", count: 16 }, { name: "안과", count: 8 },
+        { name: "이비인후과", count: 4 }, { name: "피부과", count: 2 }, { name: "비뇨의학과", count: 4 }, { name: "영상의학과", count: 14 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 3 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 1 }, { name: "가정의학과", count: 4 }, { name: "응급의학과", count: 9 }, { name: "직업환경의학과", count: 1 },
+        { name: "구강악안면외과", count: 1 }, { name: "통합치의학과", count: 2 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "수면다원검사 실시기관", "인공와우 실시기관", "측두하악관절자극요법 실시기관", "응급의료기관",
+        "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "재활환자 재택관리 시범기관", "입원형 호스피스전문기관",
+        "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관", "제3차의료급여기관",
+        "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_30": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(54538) 전북특별자치도 익산시 무왕로 895, (신동)",
+      phone: "063-859-1114",
+      homepage: "https://www.wkuh.org",
+      beds: { generalHigh: 30, generalNormal: 600, icuAdult: 93, icuChild: 0, icuNeonatal: 15, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 30 },
+      facilities: { isolation: 11, sterile: 2, hospice: 1, delivery: 6, operating: 17, emergency: 38, physicalTherapy: 8, nursery: 5, roomingIn: 0, recovery: 10, hemodialysis: 45, brachytherapy: 0, radioiodine: 1 },
+      doctors: { total: 286, md: 283, dentist: 3, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 38 }, { name: "신경과", count: 8 }, { name: "정신건강의학과", count: 6 }, { name: "외과", count: 17 },
+        { name: "정형외과", count: 8 }, { name: "신경외과", count: 7 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 6 }, { name: "산부인과", count: 5 }, { name: "소아청소년과", count: 9 }, { name: "안과", count: 3 },
+        { name: "이비인후과", count: 4 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 12 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 3 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 2 }, { name: "응급의학과", count: 13 }, { name: "직업환경의학과", count: 2 },
+        { name: "예방의학과", count: 3 }, { name: "구강악안면외과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "수면다원검사 실시기관", "신속대응시스템 시범기관", "의·한협진 활성화를 위한 5단계 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정용 인공호흡기 환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "경피적 대동맥판삽입 실시기관", "외국인 근로자 등 의료지원 사업시행 의료기관", "제3차의료급여기관", "(정신질환)병원기반·낮병동 시범기관"
+      ]
+    },
+    "HOSP_31": {
+      hospitalType: "상급종합",
+      founderType: "국립",
+      fullAddress: "(54907) 전북특별자치도 전주시 덕진구 건지로 20, (금암동)",
+      phone: "063-250-1129",
+      homepage: "https://www.cuh.co.kr",
+      beds: { generalHigh: 19, generalNormal: 868, icuAdult: 84, icuChild: 10, icuNeonatal: 25, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 1, psyCloseNormal: 22 },
+      facilities: { isolation: 8, sterile: 12, hospice: 1, delivery: 3, operating: 21, emergency: 48, physicalTherapy: 32, nursery: 10, roomingIn: 0, recovery: 16, hemodialysis: 25, brachytherapy: 1, radioiodine: 2 },
+      doctors: { total: 438, md: 435, dentist: 3, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 66 }, { name: "신경과", count: 11 }, { name: "정신건강의학과", count: 6 }, { name: "외과", count: 17 },
+        { name: "정형외과", count: 11 }, { name: "신경외과", count: 6 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 13 }, { name: "산부인과", count: 9 }, { name: "소아청소년과", count: 13 }, { name: "안과", count: 8 },
+        { name: "이비인후과", count: 8 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 4 }, { name: "영상의학과", count: 15 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 8 }, { name: "진단검사의학과", count: 5 }, { name: "재활의학과", count: 6 },
+        { name: "핵의학과", count: 4 }, { name: "가정의학과", count: 1 }, { name: "응급의학과", count: 7 }, { name: "예방의학과", count: 2 },
+        { name: "구강악안면외과", count: 3 }, { name: "구강내과", count: 1 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "소아 중환자실", "신생아 중환자실",
+        "1형 당뇨병 환자 재택관리 시범기관", "가정용 인공호흡기 환자 재택관리 시범기관", "가정형 호스피스전문기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관",
+        "입원형 호스피스전문기관", "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "외국인 근로자 등 의료지원 사업시행 의료기관",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_32": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(61469) 전남광주통합특별시 동구 제봉로 42, (학동)",
+      phone: "062-1899-0000",
+      homepage: "https://www.cnuh.com",
+      beds: { generalHigh: 33, generalNormal: 805, icuAdult: 110, icuChild: 8, icuNeonatal: 45, psyOpenHigh: 0, psyOpenNormal: 4, psyCloseHigh: 0, psyCloseNormal: 32 },
+      facilities: { isolation: 7, sterile: 0, hospice: 1, delivery: 8, operating: 22, emergency: 37, physicalTherapy: 7, nursery: 5, roomingIn: 1, recovery: 25, hemodialysis: 56, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 500, md: 488, dentist: 12, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 77 }, { name: "신경과", count: 15 }, { name: "정신건강의학과", count: 10 }, { name: "외과", count: 21 },
+        { name: "정형외과", count: 12 }, { name: "신경외과", count: 11 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 6 },
+        { name: "마취통증의학과", count: 11 }, { name: "산부인과", count: 8 }, { name: "소아청소년과", count: 23 }, { name: "안과", count: 9 },
+        { name: "이비인후과", count: 8 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 13 },
+        { name: "방사선종양학과", count: 1 }, { name: "병리과", count: 6 }, { name: "진단검사의학과", count: 5 }, { name: "재활의학과", count: 5 },
+        { name: "핵의학과", count: 4 }, { name: "가정의학과", count: 1 }, { name: "응급의학과", count: 16 }, { name: "직업환경의학과", count: 1 },
+        { name: "예방의학과", count: 2 }, { name: "구강악안면외과", count: 4 }, { name: "구강병리과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관", "응급의료기관",
+        "성인 중환자실", "소아 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "경피적 대동맥판삽입 실시기관",
+        "심실 보조장치 치료술 실시기관(체외형&이식형)", "외국인 근로자 등 의료지원 사업시행 의료기관",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_33": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(61453) 전남광주통합특별시 동구 필문대로 365, (학동)",
+      phone: "062-1811-7474",
+      homepage: "https://hosp.chosun.ac.kr",
+      beds: { generalHigh: 28, generalNormal: 652, icuAdult: 79, icuChild: 0, icuNeonatal: 20, psyOpenHigh: 0, psyOpenNormal: 6, psyCloseHigh: 0, psyCloseNormal: 20 },
+      facilities: { isolation: 9, sterile: 3, hospice: 1, delivery: 3, operating: 15, emergency: 32, physicalTherapy: 11, nursery: 12, roomingIn: 0, recovery: 15, hemodialysis: 38, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 305, md: 301, dentist: 4, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 40 }, { name: "신경과", count: 5 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 10 },
+        { name: "정형외과", count: 11 }, { name: "신경외과", count: 9 }, { name: "심장혈관흉부외과", count: 2 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 12 }, { name: "산부인과", count: 5 }, { name: "소아청소년과", count: 11 }, { name: "안과", count: 5 },
+        { name: "이비인후과", count: 4 }, { name: "피부과", count: 5 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 8 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 3 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 1 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 2 }, { name: "응급의학과", count: 10 }, { name: "직업환경의학과", count: 2 },
+        { name: "구강악안면외과", count: 1 }, { name: "소아치과", count: 1 }, { name: "치과보존과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "경피적 좌심방이 폐색술 실시기관",
+        "외국인 근로자 등 의료지원 사업시행 의료기관", "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_34": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(58128) 전남광주통합특별시 화순군 화순읍 서양로 322, (화순읍)",
+      phone: "061-379-7114",
+      homepage: "https://www.cnuhh.com",
+      beds: { generalHigh: 39, generalNormal: 564, icuAdult: 32, icuChild: 0, icuNeonatal: 1, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 0 },
+      facilities: { isolation: 5, sterile: 12, hospice: 2, delivery: 1, operating: 14, emergency: 24, physicalTherapy: 10, nursery: 1, roomingIn: 0, recovery: 10, hemodialysis: 16, brachytherapy: 0, radioiodine: 5 },
+      doctors: { total: 219, md: 217, dentist: 2, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 49 }, { name: "신경과", count: 1 }, { name: "정신건강의학과", count: 2 }, { name: "외과", count: 18 },
+        { name: "정형외과", count: 7 }, { name: "신경외과", count: 6 }, { name: "심장혈관흉부외과", count: 3 }, { name: "마취통증의학과", count: 6 },
+        { name: "산부인과", count: 4 }, { name: "소아청소년과", count: 5 }, { name: "이비인후과", count: 5 }, { name: "피부과", count: 1 },
+        { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 9 }, { name: "방사선종양학과", count: 4 }, { name: "병리과", count: 5 },
+        { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 1 }, { name: "핵의학과", count: 5 }, { name: "가정의학과", count: 3 },
+        { name: "응급의학과", count: 4 }, { name: "직업환경의학과", count: 2 }, { name: "예방의학과", count: 1 }, { name: "치주과", count: 1 },
+        { name: "구강내과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관", "조혈모세포이식 실시기관",
+        "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실",
+        "1형 당뇨병 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관",
+        "암환자(요루) 재택관리 시범기관", "입원형 호스피스전문기관", "자문형 호스피스전문기관",
+        "외국인 근로자 등 의료지원 사업시행 의료기관", "제3차의료급여기관"
+      ]
+    },
+    "HOSP_35": {
+      hospitalType: "상급종합",
+      founderType: "특수법인",
+      fullAddress: "(41944) 대구광역시 중구 동덕로 130, (삼덕동2가, 경북대학교병원)",
+      phone: "053-200-5114",
+      homepage: "https://knuh.kr",
+      beds: { generalHigh: 45, generalNormal: 677, icuAdult: 88, icuChild: 0, icuNeonatal: 15, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 1, psyCloseNormal: 19 },
+      facilities: { isolation: 18, sterile: 3, hospice: 1, delivery: 2, operating: 24, emergency: 34, physicalTherapy: 15, nursery: 6, roomingIn: 1, recovery: 14, hemodialysis: 40, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 456, md: 455, dentist: 1, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 62 }, { name: "신경과", count: 8 }, { name: "정신건강의학과", count: 7 }, { name: "외과", count: 15 },
+        { name: "정형외과", count: 12 }, { name: "신경외과", count: 11 }, { name: "심장혈관흉부외과", count: 8 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 11 }, { name: "산부인과", count: 7 }, { name: "소아청소년과", count: 12 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 11 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 6 }, { name: "진단검사의학과", count: 5 }, { name: "재활의학과", count: 1 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 5 }, { name: "응급의학과", count: 8 }, { name: "예방의학과", count: 4 },
+        { name: "치주과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관", "상급종합병원 심층진찰 시범기관",
+        "수면다원검사 실시기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정간호실시기관", "복막투석 환자 재택관리 시범기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_36": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(42601) 대구광역시 달서구 달구벌대로 1035, (신당동)",
+      phone: "1577-6622",
+      homepage: "https://dongsan.dsmc.or.kr",
+      beds: { generalHigh: 69, generalNormal: 722, icuAdult: 63, icuChild: 7, icuNeonatal: 43, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 20 },
+      facilities: { isolation: 17, sterile: 4, hospice: 1, delivery: 6, operating: 24, emergency: 33, physicalTherapy: 22, nursery: 10, roomingIn: 0, recovery: 19, hemodialysis: 48, brachytherapy: 1, radioiodine: 2 },
+      doctors: { total: 383, md: 379, dentist: 4, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 65 }, { name: "신경과", count: 8 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 20 },
+        { name: "정형외과", count: 9 }, { name: "신경외과", count: 6 }, { name: "심장혈관흉부외과", count: 8 }, { name: "성형외과", count: 6 },
+        { name: "마취통증의학과", count: 8 }, { name: "산부인과", count: 10 }, { name: "소아청소년과", count: 8 }, { name: "안과", count: 8 },
+        { name: "이비인후과", count: 5 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 14 },
+        { name: "방사선종양학과", count: 5 }, { name: "병리과", count: 7 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 3 }, { name: "응급의학과", count: 14 }, { name: "직업환경의학과", count: 3 },
+        { name: "예방의학과", count: 1 }, { name: "구강악안면외과", count: 2 }, { name: "치과보철과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관", "상급종합병원 심층진찰 시범기관",
+        "수면다원검사 실시기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "응급의료기관", "성인 중환자실",
+        "소아 중환자실", "신생아 중환자실", "가정간호실시기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "(정신질환)병원기반·낮병동 시범기관"
+      ]
+    },
+    "HOSP_37": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(42472) 대구광역시 남구 두류공원로17길 33, (대명동)",
+      phone: "053-650-3000",
+      homepage: "https://www.dcmc.co.kr",
+      beds: { generalHigh: 60, generalNormal: 642, icuAdult: 62, icuChild: 0, icuNeonatal: 42, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 4, psyCloseNormal: 16 },
+      facilities: { isolation: 9, sterile: 2, hospice: 1, delivery: 3, operating: 19, emergency: 20, physicalTherapy: 15, nursery: 10, roomingIn: 1, recovery: 20, hemodialysis: 40, brachytherapy: 1, radioiodine: 0 },
+      doctors: { total: 302, md: 295, dentist: 7, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 56 }, { name: "신경과", count: 7 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 13 },
+        { name: "정형외과", count: 6 }, { name: "신경외과", count: 5 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 8 }, { name: "산부인과", count: 8 }, { name: "소아청소년과", count: 21 }, { name: "안과", count: 8 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 3 }, { name: "영상의학과", count: 9 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 4 }, { name: "응급의학과", count: 6 }, { name: "예방의학과", count: 4 },
+        { name: "구강악안면외과", count: 2 }, { name: "치주과", count: 1 }, { name: "구강내과", count: 1 }, { name: "통합치의학과", count: 2 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "개방병원", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관",
+        "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관", "응급의료기관",
+        "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "입원형 호스피스전문기관",
+        "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관",
+        "제3차의료급여기관", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_38": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(42415) 대구광역시 남구 현충로 170, (대명동)",
+      phone: "053-623-8001",
+      homepage: "https://yumc.ac.kr",
+      beds: { generalHigh: 86, generalNormal: 643, icuAdult: 84, icuChild: 0, icuNeonatal: 15, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 2, psyCloseNormal: 18 },
+      facilities: { isolation: 7, sterile: 4, hospice: 1, delivery: 1, operating: 23, emergency: 36, physicalTherapy: 10, nursery: 3, roomingIn: 0, recovery: 12, hemodialysis: 57, brachytherapy: 0, radioiodine: 0 },
+      doctors: { total: 359, md: 356, dentist: 3, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 60 }, { name: "신경과", count: 6 }, { name: "정신건강의학과", count: 7 }, { name: "외과", count: 19 },
+        { name: "정형외과", count: 10 }, { name: "신경외과", count: 10 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 5 },
+        { name: "마취통증의학과", count: 8 }, { name: "산부인과", count: 5 }, { name: "소아청소년과", count: 7 }, { name: "안과", count: 12 },
+        { name: "이비인후과", count: 4 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 9 },
+        { name: "방사선종양학과", count: 4 }, { name: "병리과", count: 6 }, { name: "진단검사의학과", count: 3 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 4 }, { name: "가정의학과", count: 3 }, { name: "응급의학과", count: 7 }, { name: "직업환경의학과", count: 2 },
+        { name: "예방의학과", count: 2 }, { name: "구강악안면외과", count: 1 }, { name: "치과보철과", count: 1 }, { name: "치과보존과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "개방병원", "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "조혈모세포이식 실시기관",
+        "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실",
+        "1형 당뇨병 환자 재택관리 시범기관", "가정용 인공호흡기 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관",
+        "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "(정신질환)병원기반·낮병동 시범기관"
+      ]
+    },
+    "HOSP_39": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(41404) 대구광역시 북구 호국로 807, 칠곡경북대학교병원(임상실습동 1~11층 포함) (학정동)",
+      phone: "053-200-2000",
+      homepage: "https://www.knuch.kr",
+      beds: { generalHigh: 62, generalNormal: 753, icuAdult: 45, icuChild: 12, icuNeonatal: 39, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 20 },
+      facilities: { isolation: 17, sterile: 10, hospice: 1, delivery: 7, operating: 34, emergency: 36, physicalTherapy: 15, nursery: 10, roomingIn: 0, recovery: 20, hemodialysis: 20, brachytherapy: 0, radioiodine: 3 },
+      doctors: { total: 241, md: 239, dentist: 2, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 44 }, { name: "신경과", count: 9 }, { name: "정신건강의학과", count: 6 }, { name: "외과", count: 29 },
+        { name: "신경외과", count: 3 }, { name: "심장혈관흉부외과", count: 3 }, { name: "성형외과", count: 3 }, { name: "마취통증의학과", count: 11 },
+        { name: "산부인과", count: 11 }, { name: "소아청소년과", count: 34 }, { name: "안과", count: 4 }, { name: "이비인후과", count: 4 },
+        { name: "피부과", count: 1 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 8 }, { name: "방사선종양학과", count: 5 },
+        { name: "병리과", count: 6 }, { name: "진단검사의학과", count: 3 }, { name: "재활의학과", count: 3 }, { name: "핵의학과", count: 3 },
+        { name: "가정의학과", count: 4 }, { name: "응급의학과", count: 8 }, { name: "예방의학과", count: 1 }, { name: "구강악안면외과", count: 2 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관",
+        "조혈모세포이식 실시기관", "중증소아 단기입원서비스 시범기관", "응급의료기관", "성인 중환자실",
+        "소아 중환자실", "신생아 중환자실", "가정형 호스피스전문기관", "복막투석 환자 재택관리 시범기관",
+        "중증소아 재택의료 시범기관", "입원형 호스피스전문기관", "자문형 호스피스전문기관", "제3차의료급여기관"
+      ]
+    },
+    "HOSP_40": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(49267) 부산광역시 서구 감천로 262, (암남동)",
+      phone: "051-990-6114",
+      homepage: "https://www.kosinmed.or.kr",
+      beds: { generalHigh: 46, generalNormal: 664, icuAdult: 77, icuChild: 0, icuNeonatal: 18, psyOpenHigh: 0, psyOpenNormal: 6, psyCloseHigh: 0, psyCloseNormal: 14 },
+      facilities: { isolation: 10, sterile: 4, hospice: 1, delivery: 7, operating: 13, emergency: 29, physicalTherapy: 13, nursery: 7, roomingIn: 1, recovery: 7, hemodialysis: 35, brachytherapy: 0, radioiodine: 3 },
+      doctors: { total: 278, md: 272, dentist: 6, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 55 }, { name: "신경과", count: 7 }, { name: "정신건강의학과", count: 2 }, { name: "외과", count: 21 },
+        { name: "정형외과", count: 5 }, { name: "신경외과", count: 5 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 7 }, { name: "산부인과", count: 6 }, { name: "소아청소년과", count: 8 }, { name: "안과", count: 4 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 4 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 11 },
+        { name: "방사선종양학과", count: 4 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 8 }, { name: "응급의학과", count: 4 }, { name: "직업환경의학과", count: 4 },
+        { name: "예방의학과", count: 2 }, { name: "치과보철과", count: 1 }, { name: "치주과", count: 1 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정간호실시기관", "가정형 호스피스전문기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "중증소아 재택의료 시범기관",
+        "입원형 호스피스전문기관", "자문형 호스피스전문기관", "(정신질환)낮병동 시범기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관"
+      ]
+    },
+    "HOSP_41": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(49201) 부산광역시 서구 대신공원로 26, (동대신동3가)",
+      phone: "051-240-2400",
+      homepage: "https://www.damc.or.kr",
+      beds: { generalHigh: 59, generalNormal: 699, icuAdult: 99, icuChild: 0, icuNeonatal: 20, psyOpenHigh: 2, psyOpenNormal: 0, psyCloseHigh: 2, psyCloseNormal: 16 },
+      facilities: { isolation: 4, sterile: 7, hospice: 1, delivery: 4, operating: 18, emergency: 39, physicalTherapy: 29, nursery: 5, roomingIn: 0, recovery: 10, hemodialysis: 27, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 318, md: 301, dentist: 17, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 51 }, { name: "신경과", count: 13 }, { name: "정신건강의학과", count: 4 }, { name: "외과", count: 14 },
+        { name: "정형외과", count: 5 }, { name: "신경외과", count: 6 }, { name: "심장혈관흉부외과", count: 4 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 8 }, { name: "산부인과", count: 5 }, { name: "소아청소년과", count: 6 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 2 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 15 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 4 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 3 }, { name: "가정의학과", count: 5 }, { name: "응급의학과", count: 14 }, { name: "직업환경의학과", count: 3 },
+        { name: "예방의학과", count: 3 }, { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 2 }, { name: "치과교정과", count: 1 },
+        { name: "치과보존과", count: 1 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "선천성 악안면 기형의 치과교정 및 악정형 치료 실시기관", "수면다원검사 실시기관", "신속대응시스템 시범기관",
+        "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관", "응급의료기관",
+        "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관",
+        "재활환자 재택관리 시범기관", "(정신질환)낮병동 시범기관", "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관"
+      ]
+    },
+    "HOSP_42": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(49241) 부산광역시 서구 구덕로 179, (아미동1가)",
+      phone: "051-240-7000",
+      homepage: "https://www.pnuh.or.kr",
+      beds: { generalHigh: 61, generalNormal: 789, icuAdult: 116, icuChild: 0, icuNeonatal: 20, psyOpenHigh: 1, psyOpenNormal: 4, psyCloseHigh: 1, psyCloseNormal: 18 },
+      facilities: { isolation: 28, sterile: 12, hospice: 1, delivery: 12, operating: 26, emergency: 37, physicalTherapy: 26, nursery: 10, roomingIn: 0, recovery: 17, hemodialysis: 32, brachytherapy: 1, radioiodine: 2 },
+      doctors: { total: 508, md: 493, dentist: 15, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 76 }, { name: "신경과", count: 13 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 28 },
+        { name: "정형외과", count: 9 }, { name: "신경외과", count: 15 }, { name: "심장혈관흉부외과", count: 13 }, { name: "성형외과", count: 4 },
+        { name: "마취통증의학과", count: 13 }, { name: "산부인과", count: 12 }, { name: "안과", count: 15 }, { name: "이비인후과", count: 11 },
+        { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 8 }, { name: "영상의학과", count: 17 }, { name: "방사선종양학과", count: 3 },
+        { name: "병리과", count: 4 }, { name: "진단검사의학과", count: 6 }, { name: "재활의학과", count: 6 }, { name: "핵의학과", count: 3 },
+        { name: "가정의학과", count: 6 }, { name: "응급의학과", count: 9 }, { name: "예방의학과", count: 1 }, { name: "구강악안면외과", count: 2 },
+        { name: "치과보철과", count: 1 }, { name: "치주과", count: 1 }, { name: "치과보존과", count: 1 }, { name: "통합치의학과", count: 2 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관", "상급종합병원 심층진찰 시범기관",
+        "수면다원검사 실시기관", "인공와우 실시기관", "조혈모세포이식 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "1형 당뇨병 환자 재택관리 시범기관", "가정간호실시기관",
+        "가정용 인공호흡기 환자 재택관리 시범기관", "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "재활환자 재택관리 시범기관",
+        "입원형 호스피스전문기관", "자문형 호스피스전문기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "외국인 근로자 등 의료지원 사업시행 의료기관",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)"
+      ]
+    },
+    "HOSP_43": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(50612) 경상남도 양산시 물금읍 금오로 20, (물금읍)",
+      phone: "055-360-1000",
+      homepage: "https://www.pnuyh.or.kr",
+      beds: { generalHigh: 91, generalNormal: 845, icuAdult: 75, icuChild: 13, icuNeonatal: 38, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 7, psyCloseNormal: 26 },
+      facilities: { isolation: 23, sterile: 8, hospice: 1, delivery: 4, operating: 26, emergency: 45, physicalTherapy: 46, nursery: 2, roomingIn: 1, recovery: 14, hemodialysis: 26, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 466, md: 464, dentist: 2, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 76 }, { name: "신경과", count: 14 }, { name: "정신건강의학과", count: 5 }, { name: "외과", count: 21 },
+        { name: "정형외과", count: 6 }, { name: "신경외과", count: 9 }, { name: "심장혈관흉부외과", count: 13 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 18 }, { name: "산부인과", count: 6 }, { name: "소아청소년과", count: 39 }, { name: "안과", count: 6 },
+        { name: "이비인후과", count: 11 }, { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 16 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 8 }, { name: "진단검사의학과", count: 5 }, { name: "재활의학과", count: 6 },
+        { name: "핵의학과", count: 1 }, { name: "가정의학과", count: 9 }, { name: "응급의학과", count: 9 }, { name: "직업환경의학과", count: 5 },
+        { name: "예방의학과", count: 1 }, { name: "구강악안면외과", count: 1 }
+      ],
+      specialAreas: [
+        "비대면진료 시범사업 진료기관(의료기관)", "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "수면다원검사 실시기관", "의·한협진 활성화를 위한 5단계 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "응급의료기관", "성인 중환자실", "소아 중환자실", "신생아 중환자실", "가정용 인공호흡기 환자 재택관리 시범기관",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관",
+        "재활환자 재택관리 시범기관", "입원형 호스피스전문기관", "자문형 호스피스전문기관",
+        "장애인 건강 주치의 시범기관(방문진료 실시기관)", "장애인 건강 주치의 시범기관(전체)",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "심실 보조장치 치료술 실시기관(체외형&이식형)",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "외국인 근로자 등 의료지원 사업시행 의료기관",
+        "제3차의료급여기관", "(정신질환)병원기반·낮병동 시범기관"
+      ]
+    },
+    "HOSP_44": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(47392) 부산광역시 부산진구 복지로 75, 진사로83번길 75, 진사로83번길 81, 1층(일부), 3층 (개금동)",
+      phone: "051-890-6114",
+      homepage: "https://www.paik.ac.kr/busan",
+      beds: { generalHigh: 13, generalNormal: 566, icuAdult: 66, icuChild: 0, icuNeonatal: 35, psyOpenHigh: 0, psyOpenNormal: 51, psyCloseHigh: 0, psyCloseNormal: 20 },
+      facilities: { isolation: 20, sterile: 4, hospice: 1, delivery: 4, operating: 17, emergency: 26, physicalTherapy: 20, nursery: 8, roomingIn: 1, recovery: 8, hemodialysis: 22, brachytherapy: 1, radioiodine: 2 },
+      doctors: { total: 346, md: 336, dentist: 10, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 53 }, { name: "신경과", count: 8 }, { name: "정신건강의학과", count: 4 }, { name: "외과", count: 18 },
+        { name: "정형외과", count: 8 }, { name: "신경외과", count: 8 }, { name: "심장혈관흉부외과", count: 5 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 14 }, { name: "소아청소년과", count: 10 }, { name: "안과", count: 9 }, { name: "이비인후과", count: 6 },
+        { name: "피부과", count: 3 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 14 }, { name: "방사선종양학과", count: 3 },
+        { name: "병리과", count: 4 }, { name: "재활의학과", count: 3 }, { name: "가정의학과", count: 5 }, { name: "응급의학과", count: 13 },
+        { name: "직업환경의학과", count: 5 }, { name: "구강악안면외과", count: 3 }, { name: "치과교정과", count: 1 }, { name: "구강내과", count: 1 },
+        { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관", "상급종합병원 심층진찰 시범기관",
+        "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실",
+        "결핵환자 재택관리 시범기관", "복막투석 환자 재택관리 시범기관", "경피적 대동맥판삽입 실시기관",
+        "경피적 좌심방이 폐색술 실시기관", "클립을 사용한 경피적 경도관 승모판 재건술 실시기관",
+        "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반·낮병동 시범기관"
+      ]
+    },
+    "HOSP_45": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(44033) 울산광역시 동구 대학병원로 25, 울산대학교병원 (전하동)",
+      phone: "052-250-7000",
+      homepage: "https://www.uuh.ulsan.kr",
+      beds: { generalHigh: 110, generalNormal: 682, icuAdult: 97, icuChild: 0, icuNeonatal: 26, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 20 },
+      facilities: { isolation: 5, sterile: 10, hospice: 1, delivery: 5, operating: 20, emergency: 37, physicalTherapy: 29, nursery: 10, roomingIn: 1, recovery: 10, hemodialysis: 58, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 359, md: 341, dentist: 18, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 56 }, { name: "신경과", count: 7 }, { name: "정신건강의학과", count: 7 }, { name: "외과", count: 22 },
+        { name: "정형외과", count: 5 }, { name: "신경외과", count: 7 }, { name: "심장혈관흉부외과", count: 6 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 15 }, { name: "산부인과", count: 6 }, { name: "소아청소년과", count: 13 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 7 }, { name: "피부과", count: 2 }, { name: "비뇨의학과", count: 6 }, { name: "영상의학과", count: 15 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 7 }, { name: "진단검사의학과", count: 3 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 2 }, { name: "가정의학과", count: 8 }, { name: "응급의학과", count: 12 }, { name: "직업환경의학과", count: 7 },
+        { name: "예방의학과", count: 3 }, { name: "구강악안면외과", count: 3 }, { name: "치과보철과", count: 1 }, { name: "소아치과", count: 1 },
+        { name: "치주과", count: 1 }, { name: "치과보존과", count: 1 }, { name: "통합치의학과", count: 3 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "측두하악관절자극요법 실시기관", "응급의료기관", "성인 중환자실", "신생아 중환자실",
+        "가정용 인공호흡기 환자 재택관리 시범기관", "가정형 호스피스전문기관", "결핵환자 재택관리 시범기관",
+        "복막투석 환자 재택관리 시범기관", "심장질환자 재택관리 시범기관", "암환자(장루) 재택관리 시범기관",
+        "재활환자 재택관리 시범기관", "입원형 호스피스전문기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관",
+        "클립을 사용한 경피적 경도관 승모판 재건술 실시기관", "제3차의료급여기관", "난임시술(인공)", "난임시술(체외)", "(정신질환)병원기반 시범기관"
+      ]
+    },
+    "HOSP_46": {
+      hospitalType: "상급종합",
+      founderType: "공립",
+      fullAddress: "(52727) 경상남도 진주시 강남로 79, (칠암동)",
+      phone: "055-750-8000",
+      homepage: "https://www.gnuh.co.kr",
+      beds: { generalHigh: 38, generalNormal: 668, icuAdult: 66, icuChild: 0, icuNeonatal: 15, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 26 },
+      facilities: { isolation: 20, sterile: 2, hospice: 1, delivery: 7, operating: 17, emergency: 44, physicalTherapy: 16, nursery: 16, roomingIn: 1, recovery: 10, hemodialysis: 30, brachytherapy: 0, radioiodine: 1 },
+      doctors: { total: 280, md: 278, dentist: 2, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 48 }, { name: "신경과", count: 9 }, { name: "정신건강의학과", count: 4 }, { name: "외과", count: 12 },
+        { name: "정형외과", count: 6 }, { name: "신경외과", count: 5 }, { name: "심장혈관흉부외과", count: 7 }, { name: "성형외과", count: 3 },
+        { name: "마취통증의학과", count: 8 }, { name: "산부인과", count: 6 }, { name: "소아청소년과", count: 9 }, { name: "안과", count: 7 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 1 }, { name: "비뇨의학과", count: 5 }, { name: "영상의학과", count: 9 },
+        { name: "방사선종양학과", count: 3 }, { name: "병리과", count: 5 }, { name: "진단검사의학과", count: 1 }, { name: "재활의학과", count: 4 },
+        { name: "핵의학과", count: 1 }, { name: "가정의학과", count: 1 }, { name: "응급의학과", count: 11 }, { name: "예방의학과", count: 3 },
+        { name: "구강악안면외과", count: 1 }, { name: "통합치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관", "상급종합병원 심층진찰 시범기관",
+        "수면다원검사 실시기관", "신속대응시스템 시범기관", "인공와우 실시기관", "조혈모세포이식 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정형 호스피스전문기관", "복막투석 환자 재택관리 시범기관",
+        "입원형 호스피스전문기관", "경피적 대동맥판삽입 실시기관", "난임시술(인공)",
+        "외국인 근로자 등 의료지원 사업시행 의료기관", "제3차의료급여기관", "난임시술(체외)"
+      ]
+    },
+    "HOSP_47": {
+      hospitalType: "상급종합",
+      founderType: "학교법인",
+      fullAddress: "(51353) 경상남도 창원시 마산회원구 팔용로 158-158, (합성동, 삼성창원병원)",
+      phone: "055-233-8899",
+      homepage: "https://smc.skku.edu",
+      beds: { generalHigh: 52, generalNormal: 574, icuAdult: 70, icuChild: 0, icuNeonatal: 24, psyOpenHigh: 0, psyOpenNormal: 0, psyCloseHigh: 0, psyCloseNormal: 0 },
+      facilities: { isolation: 10, sterile: 0, hospice: 1, delivery: 7, operating: 16, emergency: 40, physicalTherapy: 17, nursery: 10, roomingIn: 0, recovery: 10, hemodialysis: 37, brachytherapy: 0, radioiodine: 2 },
+      doctors: { total: 277, md: 269, dentist: 8, koreanMed: 0 },
+      specialties: [
+        { name: "내과", count: 48 }, { name: "신경과", count: 4 }, { name: "정신건강의학과", count: 4 }, { name: "외과", count: 17 },
+        { name: "정형외과", count: 6 }, { name: "신경외과", count: 9 }, { name: "심장혈관흉부외과", count: 5 }, { name: "성형외과", count: 2 },
+        { name: "마취통증의학과", count: 10 }, { name: "산부인과", count: 7 }, { name: "소아청소년과", count: 10 }, { name: "안과", count: 2 },
+        { name: "이비인후과", count: 6 }, { name: "피부과", count: 2 }, { name: "비뇨의학과", count: 3 }, { name: "영상의학과", count: 11 },
+        { name: "방사선종양학과", count: 2 }, { name: "병리과", count: 8 }, { name: "진단검사의학과", count: 3 }, { name: "재활의학과", count: 3 },
+        { name: "핵의학과", count: 1 }, { name: "가정의학과", count: 11 }, { name: "응급의학과", count: 11 }, { name: "직업환경의학과", count: 9 },
+        { name: "구강악안면외과", count: 1 }, { name: "영상치의학과", count: 1 }
+      ],
+      specialAreas: [
+        "간호간병통합서비스 제공기관", "HPV 국가예방접종사업 참여기관", "차세대염기서열분석 기반 유전자 패널검사 실시기관",
+        "상급종합병원 심층진찰 시범기관", "수면다원검사 실시기관", "인공와우 실시기관", "측두하악관절자극요법 실시기관",
+        "응급의료기관", "성인 중환자실", "신생아 중환자실", "가정간호실시기관", "복막투석 환자 재택관리 시범기관",
+        "암환자(장루) 재택관리 시범기관", "암환자(요루) 재택관리 시범기관", "자문형 호스피스전문기관",
+        "경피적 대동맥판삽입 실시기관", "경피적 좌심방이 폐색술 실시기관", "제3차의료급여기관"
       ]
     }
   };
@@ -759,7 +1883,6 @@
   let radiusCircle = null;
   let foodMarkers = [];
 
-  /* 지도 초기화 */
   const googleStreets = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=ko', {
     attribution: '&copy; Google Maps', maxZoom: 20
   });
@@ -776,6 +1899,18 @@
     "모던 파스텔 지도": cartoVoyager,
     "구글 위성 + 도로명 지도": googleHybrid
   }, null, { position: 'topright' }).addTo(map);
+
+  /* 공식 홈페이지 URL 정규화: HOSPITALS 마스터의 검증된 HTTPS 메인 도메인 우선 적용 */
+  function getVerifiedHomepage(h) {
+    if (!h) return "";
+    if (h.homepage && h.homepage.trim()) return h.homepage.trim();
+    const d = HOSPITAL_DETAILS[h.id];
+    if (d && d.homepage && d.homepage.trim()) {
+      const raw = d.homepage.trim();
+      return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    }
+    return "";
+  }
 
   function getShortName(name) {
     return name
@@ -812,7 +1947,6 @@
     });
   }
 
-  /* 외부 지도 오검색 방지: 정제 병원명 + 도로명주소 조합 검색 */
   function getSearchQueryForHospital(h) {
     const shortName = getShortName(h.name);
     return `${shortName} ${h.address}`.trim();
@@ -850,7 +1984,6 @@
     }
   }
 
-  /* 좌측 선택 병원 카드 업데이트 */
   function updateSelectedHospitalCard(h) {
     const d = HOSPITAL_DETAILS[h.id];
     document.getElementById('cardHospId').innerText = h.id;
@@ -861,7 +1994,7 @@
     document.getElementById('cardHospPhone').innerText = (d && d.phone) ? d.phone : (h.phone || '-');
     document.getElementById('cardHospMeta').innerText = h.meta || '-';
 
-    const hpUrl = (d && d.homepage) ? d.homepage : h.homepage;
+    const hpUrl = getVerifiedHomepage(h);
     const hpBtn = document.getElementById('cardHomepageBtn');
     if (hpUrl) {
       hpBtn.href = hpUrl;
@@ -874,7 +2007,6 @@
     }
   }
 
-  /* 마스터 테이블 및 지도 핀 렌더링 */
   function renderTableAndMap() {
     const regionFilter = document.getElementById('regionFilter').value;
     const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -897,12 +2029,13 @@
     filtered.forEach(h => {
       const hasDetail = Boolean(HOSPITAL_DETAILS[h.id]);
       const isSelected = (h.id === selectedId);
+      const hpUrl = getVerifiedHomepage(h);
       const tr = document.createElement('tr');
       if (isSelected) tr.classList.add('selected');
       tr.onclick = () => selectHospital(h.id, true);
       tr.ondblclick = () => { selectHospital(h.id, true); switchViewMode('DETAIL'); };
-      const hpCell = h.homepage
-        ? `<a href="${h.homepage}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" style="color:#1a73e8; font-weight:700; text-decoration:none;">방문 ↗</a>`
+      const hpCell = hpUrl
+        ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" style="color:#1a73e8; font-weight:700; text-decoration:none;">방문 ↗</a>`
         : '-';
       tr.innerHTML = `
         <td>${hasDetail ? '<span class="detail-tag-done">상세보유</span>' : '<span class="detail-tag-none">기본정보</span>'}</td>
@@ -923,7 +2056,6 @@
         const summaryLine = dInfo
           ? `<div style="color:#137333; font-size:11.5px; font-weight:700; margin-top:4px;">🛏️ 병상 ${(dInfo.beds.generalHigh || 0) + (dInfo.beds.generalNormal || 0) + (dInfo.beds.icuAdult || 0) + (dInfo.beds.icuChild || 0) + (dInfo.beds.icuNeonatal || 0) + (dInfo.beds.psyOpenHigh || 0) + (dInfo.beds.psyOpenNormal || 0) + (dInfo.beds.psyCloseHigh || 0) + (dInfo.beds.psyCloseNormal || 0)}개 · 👨‍⚕️ 의사 ${dInfo.doctors.total}명</div>`
           : '';
-        const hpUrl = (dInfo && dInfo.homepage) ? dInfo.homepage : h.homepage;
         marker.bindPopup(`
           <div style="font-size:13px; line-height:1.6; min-width:235px; max-width:295px; white-space:normal;">
             <div style="font-size:11px; color:#5f6368; font-weight:600;">${h.id} · ${h.region}</div>
@@ -975,9 +2107,6 @@
     }
   }
 
-  /* ============================================================================
-     4. 병원 상세현황 (병상수 · 시설 · 의료진 · 특수진료) 렌더링
-  ============================================================================ */
   function initDetailSelector() {
     const sel = document.getElementById('detailHospSelector');
     sel.innerHTML = "";
@@ -1005,6 +2134,8 @@
 
     if (!h) return;
 
+    const hpUrl = getVerifiedHomepage(h);
+
     if (!d) {
       area.innerHTML = `
         <div class="detail-hero-card">
@@ -1020,14 +2151,14 @@
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
               <button type="button" class="btn-naver" style="padding:6px 11px; font-size:12px;" onclick="openNaverMapSmart()">🟢 네이버지도</button>
               <button type="button" class="btn-google" style="padding:6px 11px; font-size:12px;" onclick="openGoogleMapSmart()">🔵 구글맵</button>
-              ${h.homepage ? `<a href="${h.homepage}" target="_blank" rel="noopener noreferrer" class="btn-link btn-primary" style="padding:6px 11px; font-size:12px;">🌐 공식 홈페이지 ↗</a>` : ''}
+              ${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer" class="btn-link btn-primary" style="padding:6px 11px; font-size:12px;">🌐 공식 홈페이지 ↗</a>` : ''}
             </div>
           </div>
           <div class="detail-info-grid">
             <div class="detail-info-item"><span class="lbl">도로명주소</span><span>${h.address}</span></div>
             <div class="detail-info-item"><span class="lbl">대표번호</span><strong>${h.phone || '-'}</strong></div>
             <div class="detail-info-item"><span class="lbl">평가순위</span><span>${h.meta || '-'}</span></div>
-            <div class="detail-info-item"><span class="lbl">좌표</span><span>${Number(h.lat).toFixed(4)}, ${Number(h.lng).toFixed(4)}</span></div>
+            <div class="detail-info-item"><span class="lbl">홈페이지</span>${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer">${hpUrl} ↗</a>` : '-'}</div>
           </div>
         </div>
         <div class="empty-detail-box">
@@ -1088,14 +2219,14 @@
           <div style="display:flex; gap:6px; flex-wrap:wrap;">
             <button type="button" class="btn-naver" style="padding:6px 11px; font-size:12px;" onclick="openNaverMapSmart()">🟢 네이버지도</button>
             <button type="button" class="btn-google" style="padding:6px 11px; font-size:12px;" onclick="openGoogleMapSmart()">🔵 구글맵</button>
-            ${d.homepage ? `<a href="${d.homepage}" target="_blank" rel="noopener noreferrer" class="btn-link btn-primary" style="padding:6px 11px; font-size:12px;">🌐 공식 홈페이지 ↗</a>` : ''}
+            ${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer" class="btn-link btn-primary" style="padding:6px 11px; font-size:12px;">🌐 공식 홈페이지 ↗</a>` : ''}
           </div>
         </div>
         <div class="detail-info-grid">
           <div class="detail-info-item"><span class="lbl">주소</span><span>${d.fullAddress || h.address}</span></div>
           <div class="detail-info-item"><span class="lbl">전화번호</span><strong>${d.phone || '-'}</strong></div>
           <div class="detail-info-item"><span class="lbl">평가순위</span><span>${h.meta || '-'}</span></div>
-          <div class="detail-info-item"><span class="lbl">홈페이지</span>${d.homepage ? `<a href="${d.homepage}" target="_blank" rel="noopener noreferrer">${d.homepage} ↗</a>` : '-'}</div>
+          <div class="detail-info-item"><span class="lbl">홈페이지</span>${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer">${hpUrl} ↗</a>` : '-'}</div>
         </div>
       </div>
 
@@ -1154,7 +2285,7 @@
             <div class="bed-box-title">정신과폐쇄 <span>소계 ${(b.psyCloseHigh || 0) + (b.psyCloseNormal || 0)}병상</span></div>
             <div class="bed-sub-row">
               <div class="bed-pill"><div class="bp-name">상급</div><div class="bp-num ${b.psyCloseHigh === 0 ? 'zero' : ''}">${b.psyCloseHigh}</div></div>
-              <div class="bed-pill"><div class="bp-name">일반</div><div class="bp-num ${b.psyCloseNormal === 0 ? 'zero' : ''}">${b.psyCloseNormal}</div></div>
+              <div class="bed-pill"><div class="bp-name">일반</div><div class="bp-num">${b.psyCloseNormal}</div></div>
             </div>
           </div>
         </div>
@@ -1194,9 +2325,6 @@
     `;
   }
 
-  /* ============================================================================
-     5. 주변 착한가격업소 반경 탐색 및 거리 계산
-  ============================================================================ */
   function calcDistanceMeters(lat1, lng1, lat2, lng2) {
     const R = 6371000, toRad = d => d * Math.PI / 180;
     const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
@@ -1343,7 +2471,6 @@
     });
   }
 
-  /* 뷰 모드 전환 */
   function switchViewMode(mode) {
     currentViewMode = mode;
     document.getElementById('tabDetailBtn').classList.toggle('active', mode === 'DETAIL');
@@ -1382,7 +2509,6 @@
     map.flyTo([36.35, 127.85], 7, { duration: 0.7 });
   }
 
-  /* 초기 실행 */
   initFoodSelectOptions();
   initDetailSelector();
   selectHospital("HOSP_19", false);
