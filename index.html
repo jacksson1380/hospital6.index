@@ -136,37 +136,6 @@
     .summary-card .sc-val { font-size: 13px; color: #202124; font-weight: 700; margin-top: 2px; }
     .summary-card .sc-sub { font-size: 11px; color: #1967d2; margin-top: 2px; }
 
-    .cat-pill.active[data-cat="CAT_WST"] { background: #7b1fa2; color: #fff; border-color: #7b1fa2; }
-    .cat-pill.active[data-cat="CAT_SNK"] { background: #d81b60; color: #fff; border-color: #d81b60; }
-    .code-CAT_WST { background: #f3e5f5; color: #6a1b9a; }
-    .code-CAT_SNK { background: #fce4ec; color: #ad1457; }
-    .region-match-tag { background: #e8f0fe; color: #1967d2; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-
-    /* 홈페이지 내부 카카오맵 스타일 업소 요약 카드 */
-    .store-quick-card {
-      margin: 0 16px 12px;
-      padding: 12px 14px;
-      border: 1px solid #dadce0;
-      border-radius: 12px;
-      background: #f8f9fa;
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .store-quick-card.show { display: flex; }
-    .sqc-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
-    .sqc-title { font-size: 15px; font-weight: 800; color: #202124; }
-    .sqc-avg { font-size: 12px; font-weight: 700; color: #137333; background: #e6f4ea; padding: 3px 8px; border-radius: 6px; }
-    .sqc-addr { font-size: 12px; color: #5f6368; }
-    .sqc-menus { display: flex; flex-wrap: wrap; gap: 6px; }
-    .sqc-menu-chip {
-      background: #ffffff; border: 1px solid #dadce0; border-radius: 6px;
-      padding: 4px 8px; font-size: 12px; color: #202124; font-weight: 500;
-    }
-    .sqc-actions { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 2px; }
-    .sqc-actions button { padding: 6px 11px; font-size: 12px; }
-  
-
     .detail-scroll-area {
       flex: 1; overflow-y: auto; padding: 16px 20px 28px; background: #f8f9fa;
       display: flex; flex-direction: column; gap: 14px;
@@ -371,63 +340,51 @@
       </div>
     </div>
 
-<div id="foodRightWrapper" style="display:none; flex-direction:column; height:100%;">
+    <div id="foodRightWrapper" style="display:none; flex-direction:column; height:100%;">
       <div class="filter-bar">
         <select id="foodHospFilter" onchange="onFoodHospitalChange()">
-          <option value="ALL">전체 지역 (8,447개소)</option>
+          <option value="ALL">전체 병원 권역 (47개소)</option>
         </select>
-        <span class="region-match-tag" title="현재 위·경도 지오코딩 미적용 상태로 시·군·구 행정구역 매칭 제공">행정구역 매칭(지오코딩 전)</span>
+        <select id="foodRadiusFilter" onchange="renderFoodView()" title="병원 기준 반경 설정">
+          <option value="2500">반경 2.5km</option>
+          <option value="5000">반경 5.0km</option>
+          <option value="7500">반경 7.5km</option>
+          <option value="10000" selected>반경 10.0km</option>
+        </select>
         <span class="stats-badge" id="foodCountBadge">0개소</span>
       </div>
 
       <div class="filter-bar" style="padding-top:8px; padding-bottom:8px; background:#fafbfc;">
         <div class="cat-pills">
-          <button type="button" class="cat-pill active" data-cat="ALL" onclick="setFoodCatFilter('ALL')">전체</button>
+          <button type="button" class="cat-pill active" data-cat="ALL" onclick="setFoodCatFilter('ALL')">전체 업종</button>
           <button type="button" class="cat-pill" data-cat="CAT_KOR" onclick="setFoodCatFilter('CAT_KOR')">한식</button>
           <button type="button" class="cat-pill" data-cat="CAT_CHN" onclick="setFoodCatFilter('CAT_CHN')">중식</button>
           <button type="button" class="cat-pill" data-cat="CAT_JPN" onclick="setFoodCatFilter('CAT_JPN')">일식</button>
-          <button type="button" class="cat-pill" data-cat="CAT_WST" onclick="setFoodCatFilter('CAT_WST')">양식</button>
-          <button type="button" class="cat-pill" data-cat="CAT_SNK" onclick="setFoodCatFilter('CAT_SNK')">분식·기타</button>
         </div>
-        <input type="text" id="foodSearchInput" placeholder="식당명, 메뉴, 주소 검색..." onkeyup="renderFoodView()" />
+        <input type="text" id="foodSearchInput" placeholder="업소명, 대표 메뉴, 도로명 주소 검색..." onkeyup="renderFoodView()" />
       </div>
 
       <div class="summary-strip">
-        <div class="summary-card"><div class="sc-title">조회된 식당</div><div class="sc-val" id="sumAll">0개소</div><div class="sc-sub" id="sumAllSub">행안부 착한가격</div></div>
-        <div class="summary-card"><div class="sc-title">한식</div><div class="sc-val" id="sumKor">0개소</div><div class="sc-sub" id="sumKorPrice">평균 -</div></div>
-        <div class="summary-card"><div class="sc-title">중식</div><div class="sc-val" id="sumChn">0개소</div><div class="sc-sub" id="sumChnPrice">평균 -</div></div>
-        <div class="summary-card"><div class="sc-title">일식·양식·분식</div><div class="sc-val" id="sumOther">0개소</div><div class="sc-sub" id="sumOtherPrice">평균 -</div></div>
-      </div>
-
-      <div class="store-quick-card" id="storeQuickCard">
-        <div class="sqc-header">
-          <div>
-            <span class="code-badge" id="sqcCatBadge">한식</span>
-            <strong class="sqc-title" id="sqcStoreName">업소명</strong>
-          </div>
-          <span class="sqc-avg" id="sqcAvgPrice">평균 -</span>
-        </div>
-        <div class="sqc-addr" id="sqcAddress">주소</div>
-        <div class="sqc-menus" id="sqcMenus"></div>
-        <div class="sqc-actions">
-          <button type="button" class="btn-kakao" id="sqcKakaoBtn">🟡 카카오맵 바로가기</button>
-          <button type="button" class="btn-naver" id="sqcNaverBtn">🟢 네이버지도 바로가기</button>
-          <button type="button" class="btn-outline" onclick="closeStoreQuickCard()">닫기</button>
-        </div>
+        <div class="summary-card"><div class="sc-title">반경 내 착한가격업소</div><div class="sc-val" id="sumAll">0개소</div><div class="sc-sub" id="sumAllSub">행정안전부 지정</div></div>
+        <div class="summary-card"><div class="sc-title">한식 (CAT_KOR)</div><div class="sc-val" id="sumKor">0개소</div><div class="sc-sub" id="sumKorPrice">평균가 -</div></div>
+        <div class="summary-card"><div class="sc-title">중식 (CAT_CHN)</div><div class="sc-val" id="sumChn">0개소</div><div class="sc-sub" id="sumChnPrice">평균가 -</div></div>
+        <div class="summary-card"><div class="sc-title">일식 (CAT_JPN)</div><div class="sc-val" id="sumJpn">0개소</div><div class="sc-sub" id="sumJpnPrice">평균가 -</div></div>
       </div>
 
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
-              <th>구분</th><th>시·군·구</th><th>업종</th><th>식당명</th>
-              <th>평균가</th><th>대표 메뉴 및 가격</th><th>도로명 주소</th><th>지도 바로가기</th>
+              <th>구분</th><th>기준병원</th><th>업종</th><th>업소명</th>
+              <th>거리</th><th>대표 메뉴 및 가격</th><th>도로명 주소</th><th>지도보기</th>
             </tr>
           </thead>
           <tbody id="foodTableBody"></tbody>
         </table>
       </div>
     </div>
+  </div>
+</div>
 
 <div class="toast-msg" id="toastMsg"></div>
 
@@ -1814,242 +1771,744 @@
   /* ============================================================================
      3. 주변 착한가격업소 고정 좌표 데이터
   ============================================================================ */
-  let ALL_RESTAURANTS = [];
-  let restaurantsLoaded = false;
+  const GOOD_PRICE_STORES = [
+    {"itemId":"FOOD_0001","hospId":"HOSP_01","catCode":"CAT_KOR","catName":"한식","storeName":"할머니집","address":"서울특별시 종로구 사직로12길 1-5 (내자동)","menus":"된장찌개(8,000원) / 김치찌개(8,000원)","lat":37.575671,"lng":126.971439},
+    {"itemId":"FOOD_0002","hospId":"HOSP_01","catCode":"CAT_KOR","catName":"한식","storeName":"광화문뚝감","address":"서울특별시 종로구 새문안로5길 19 (당주동)","menus":"감자탕(소)(24,000원) / 뼈해장국(9,000원)","lat":37.57203,"lng":126.974293},
+    {"itemId":"FOOD_0003","hospId":"HOSP_01","catCode":"CAT_CHN","catName":"중식","storeName":"신성각","address":"서울특별시 종로구 자하문로1길 50 (필운동)","menus":"짜장면(7,000원) / 짬뽕(8,000원)","lat":37.576923,"lng":126.969707},
+    {"itemId":"FOOD_0004","hospId":"HOSP_01","catCode":"CAT_JPN","catName":"일식","storeName":"종로돈부리","address":"서울특별시 종로구 대학로11길 23 (명륜4가)","menus":"가츠동(8,500원) / 사케동(10,000원)","lat":37.582059,"lng":127.000418},
+    {"itemId":"FOOD_0005","hospId":"HOSP_01","catCode":"CAT_KOR","catName":"한식","storeName":"혜화칼국수","address":"서울특별시 종로구 창경궁로35길 13 (혜화동)","menus":"국시(9,000원) / 수육(18,000원)","lat":37.586567,"lng":127.001507},
+    {"itemId":"FOOD_0006","hospId":"HOSP_01","catCode":"CAT_KOR","catName":"한식","storeName":"연건식당","address":"서울특별시 종로구 대학로 83 (연건동)","menus":"백반정식(8,000원) / 제육볶음(9,000원)","lat":37.578647,"lng":127.00191},
+    {"itemId":"FOOD_0007","hospId":"HOSP_01","catCode":"CAT_CHN","catName":"중식","storeName":"동순원","address":"서울특별시 종로구 창경궁로 246 (명륜2가)","menus":"자장면(6,500원) / 짬뽕(7,500원)","lat":37.583312,"lng":126.999362},
+    {"itemId":"FOOD_0008","hospId":"HOSP_02","catCode":"CAT_KOR","catName":"한식","storeName":"호남식당","address":"서울특별시 광진구 자양로13길 19 (자양동) 1층","menus":"갈비탕(10,000원)","lat":37.535121,"lng":127.082924},
+    {"itemId":"FOOD_0009","hospId":"HOSP_02","catCode":"CAT_KOR","catName":"한식","storeName":"소문난숯불막창 건대본점","address":"서울특별시 광진구 동일로24길 79 (화양동) 1층","menus":"삼겹살(200g)(12,900원)","lat":37.542798,"lng":127.06941},
+    {"itemId":"FOOD_0010","hospId":"HOSP_02","catCode":"CAT_CHN","catName":"중식","storeName":"차이나홍","address":"서울특별시 광진구 능동로13길 39 (화양동) 1층","menus":"짜장면(6,000원) / 짬뽕(7,500원)","lat":37.543959,"lng":127.069758},
+    {"itemId":"FOOD_0011","hospId":"HOSP_02","catCode":"CAT_JPN","catName":"일식","storeName":"건대스시","address":"서울특별시 광진구 아차산로33길 42 (화양동)","menus":"모듬초밥(10,000원) / 우동(6,500원)","lat":37.542129,"lng":127.070817},
+    {"itemId":"FOOD_0012","hospId":"HOSP_03","catCode":"CAT_KOR","catName":"한식","storeName":"이모네집","address":"서울특별시 동대문구 회기로21길 16 (회기동)","menus":"김치찌개(7,500원) / 된장찌개(7,500원)","lat":37.565105,"lng":126.998827},
+    {"itemId":"FOOD_0013","hospId":"HOSP_03","catCode":"CAT_CHN","catName":"중식","storeName":"영화장","address":"서울특별시 동대문구 회기로 137 (회기동)","menus":"자장면(6,500원) / 탕수육(14,000원)","lat":37.591483,"lng":127.051781},
+    {"itemId":"FOOD_0014","hospId":"HOSP_03","catCode":"CAT_JPN","catName":"일식","storeName":"회기돈까스","address":"서울특별시 동대문구 경희대로4길 18 (회기동)","menus":"등심돈까스(8,000원) / 치즈돈까스(9,000원)","lat":37.59229,"lng":127.053497},
+    {"itemId":"FOOD_0015","hospId":"HOSP_04","catCode":"CAT_KOR","catName":"한식","storeName":"구로집밥","address":"서울특별시 구로구 구로동로26길 54 (구로동)","menus":"한식뷔페(7,500원) / 순두부찌개(7,500원)","lat":37.489894,"lng":126.886565},
+    {"itemId":"FOOD_0016","hospId":"HOSP_04","catCode":"CAT_CHN","catName":"중식","storeName":"복성각","address":"서울특별시 구로구 구로동로 132 (구로동)","menus":"짜장면(6,500원) / 짬뽕(7,500원)","lat":37.493125,"lng":126.88241},
+    {"itemId":"FOOD_0017","hospId":"HOSP_04","catCode":"CAT_JPN","catName":"일식","storeName":"하루돈까스","address":"서울특별시 구로구 도림로 68 (구로동)","menus":"로스카츠(8,500원) / 우동정식(9,000원)","lat":37.498112,"lng":126.889104},
+    {"itemId":"FOOD_0018","hospId":"HOSP_05","catCode":"CAT_KOR","catName":"한식","storeName":"일원한식뷔페","address":"서울특별시 강남구 일원로9길 32 (일원동)","menus":"점심백반(8,500원) / 제육덮밥(9,000원)","lat":37.489402,"lng":127.083915},
+    {"itemId":"FOOD_0019","hospId":"HOSP_05","catCode":"CAT_CHN","catName":"중식","storeName":"만리장성","address":"서울특별시 강남구 개포로109길 21 (개포동)","menus":"짜장면(7,000원) / 짬뽕(8,500원)","lat":37.489114,"lng":127.064228},
+    {"itemId":"FOOD_0020","hospId":"HOSP_07","catCode":"CAT_KOR","catName":"한식","storeName":"도곡집밥","address":"서울특별시 강남구 언주로30길 13 (도곡동)","menus":"된장찌개(8,500원) / 김치찌개(8,500원)","lat":37.490883,"lng":127.043219},
+    {"itemId":"FOOD_0021","hospId":"HOSP_07","catCode":"CAT_JPN","catName":"일식","storeName":"역삼우동소바","address":"서울특별시 강남구 도곡로 215 (역삼동)","menus":"냉모밀(8,500원) / 유부우동(7,500원)","lat":37.496218,"lng":127.039881},
+    {"itemId":"FOOD_0022","hospId":"HOSP_08","catCode":"CAT_KOR","catName":"한식","storeName":"인순이네집밥","address":"서울특별시 서대문구 세검정로1길 19 (홍은동) 1층","menus":"백반(8,000원) / 김치찌개(9,000원)","lat":37.588211,"lng":126.947823},
+    {"itemId":"FOOD_0023","hospId":"HOSP_08","catCode":"CAT_KOR","catName":"한식","storeName":"신촌수제비","address":"서울특별시 서대문구 연세로5다길 22-3 (창천동)","menus":"수제비(7,000원) / 칼국수(7,000원)","lat":37.558104,"lng":126.935912},
+    {"itemId":"FOOD_0024","hospId":"HOSP_08","catCode":"CAT_CHN","catName":"중식","storeName":"복성반점","address":"서울특별시 서대문구 연세로7안길 16 (창천동)","menus":"짜장면(6,500원) / 짬뽕(7,500원)","lat":37.557941,"lng":126.935108},
+    {"itemId":"FOOD_0025","hospId":"HOSP_08","catCode":"CAT_JPN","catName":"일식","storeName":"가츠시","address":"서울특별시 서대문구 명물길 36-6 (창천동)","menus":"돈까스정식(8,500원) / 알밥(8,000원)","lat":37.557215,"lng":126.936892},
+    {"itemId":"FOOD_0026","hospId":"HOSP_09","catCode":"CAT_KOR","catName":"한식","storeName":"목동칼국수","address":"서울특별시 양천구 목동중앙북로 38 (목동)","menus":"바지락칼국수(8,000원) / 만두(6,000원)","lat":37.542819,"lng":126.874211},
+    {"itemId":"FOOD_0027","hospId":"HOSP_09","catCode":"CAT_CHN","catName":"중식","storeName":"중화루","address":"서울특별시 양천구 목동동로 293 (목동)","menus":"짜장면(7,000원) / 짬뽕(8,000원)","lat":37.534912,"lng":126.875842},
+    {"itemId":"FOOD_0028","hospId":"HOSP_10","catCode":"CAT_KOR","catName":"한식","storeName":"구가국수","address":"서울 송파구 올림픽로51길 13 1층","menus":"잔치국수(7,000원) / 고기왕만두(6,000원)","lat":37.519412,"lng":127.112843},
+    {"itemId":"FOOD_0029","hospId":"HOSP_10","catCode":"CAT_CHN","catName":"중식","storeName":"왕짜장 마천점","address":"서울특별시 송파구 성내천로 254 (마천동)","menus":"자장면(7,000원) / 짬뽕(8,000원) / 볶음밥(8,000원)","lat":37.498123,"lng":127.145921},
+    {"itemId":"FOOD_0030","hospId":"HOSP_10","catCode":"CAT_JPN","catName":"일식","storeName":"풍납초밥","address":"서울특별시 송파구 풍성로 38 (풍납동)","menus":"오늘의초밥(10,000원) / 회덮밥(9,000원)","lat":37.532198,"lng":127.115482},
+    {"itemId":"FOOD_0031","hospId":"HOSP_11","catCode":"CAT_KOR","catName":"한식","storeName":"흑석동집밥","address":"서울특별시 동작구 흑석로13길 19 (흑석동)","menus":"백반(7,500원) / 제육볶음(8,500원)","lat":37.508214,"lng":126.961982},
+    {"itemId":"FOOD_0032","hospId":"HOSP_11","catCode":"CAT_CHN","catName":"중식","storeName":"중대반점","address":"서울특별시 동작구 흑석로 95 (흑석동)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":37.507812,"lng":126.960215},
+    {"itemId":"FOOD_0033","hospId":"HOSP_12","catCode":"CAT_KOR","catName":"한식","storeName":"안암골식당","address":"서울특별시 성북구 고려대로24길 48 (안암동5가)","menus":"순두부찌개(7,500원) / 된장찌개(7,500원)","lat":37.586124,"lng":127.028914},
+    {"itemId":"FOOD_0034","hospId":"HOSP_12","catCode":"CAT_CHN","catName":"중식","storeName":"안암반점","address":"서울특별시 성북구 인촌로24길 12 (안암동5가)","menus":"짜장면(6,000원) / 볶음밥(7,000원)","lat":37.585419,"lng":127.029842},
+    {"itemId":"FOOD_0035","hospId":"HOSP_12","catCode":"CAT_JPN","catName":"일식","storeName":"고대돈부리","address":"서울특별시 성북구 고려대로26길 42 (안암동5가)","menus":"가츠동(8,000원) / 규동(8,500원)","lat":37.586891,"lng":127.029112},
+    {"itemId":"FOOD_0036","hospId":"HOSP_13","catCode":"CAT_KOR","catName":"한식","storeName":"반포한식","address":"서울특별시 서초구 사평대로 205 (반포동)","menus":"청국장(8,500원) / 비빔밥(8,500원)","lat":37.504128,"lng":127.001924},
+    {"itemId":"FOOD_0037","hospId":"HOSP_13","catCode":"CAT_CHN","catName":"중식","storeName":"서초중화요리","address":"서울특별시 서초구 반포대로30길 42 (서초동)","menus":"짜장면(7,000원) / 짬뽕(8,500원)","lat":37.492819,"lng":127.011428},
+    {"itemId":"FOOD_0038","hospId":"HOSP_14","catCode":"CAT_KOR","catName":"한식","storeName":"행당집밥","address":"서울특별시 성동구 마조로 19 (행당동)","menus":"백반(8,000원) / 김치찌개(8,000원)","lat":37.558214,"lng":127.041928},
+    {"itemId":"FOOD_0039","hospId":"HOSP_14","catCode":"CAT_CHN","catName":"중식","storeName":"왕십리반점","address":"서울특별시 성동구 왕십리로 241 (행당동)","menus":"짜장면(6,500원) / 짬뽕(7,500원)","lat":37.561284,"lng":127.038912},
+    {"itemId":"FOOD_0040","hospId":"HOSP_15","catCode":"CAT_KOR","catName":"한식","storeName":"부평시골밥상","address":"인천광역시 부평구 동수로 72 (부평동)","menus":"보리밥정식(8,000원) / 된장찌개(7,500원)","lat":37.486812,"lng":126.723918},
+    {"itemId":"FOOD_0041","hospId":"HOSP_15","catCode":"CAT_CHN","catName":"중식","storeName":"진흥각","address":"인천광역시 부평구 부평대로 38 (부평동)","menus":"짜장면(6,000원) / 짬뽕(7,500원)","lat":37.489412,"lng":126.722148},
+    {"itemId":"FOOD_0042","hospId":"HOSP_16","catCode":"CAT_KOR","catName":"한식","storeName":"원미한식뷔페","address":"경기도 부천시 원미구 조마루로 185 (중동)","menus":"한식뷔페(8,000원)","lat":37.499812,"lng":126.764128},
+    {"itemId":"FOOD_0043","hospId":"HOSP_16","catCode":"CAT_CHN","catName":"중식","storeName":"중동반점","address":"경기도 부천시 원미구 부흥로 315 (중동)","menus":"짜장면(6,500원) / 짬뽕(7,500원)","lat":37.503128,"lng":126.768912},
+    {"itemId":"FOOD_0044","hospId":"HOSP_17","catCode":"CAT_KOR","catName":"한식","storeName":"구월집밥","address":"인천광역시 남동구 남동대로765번길 18 (구월동)","menus":"백반(8,000원) / 제육볶음(9,000원)","lat":37.448912,"lng":126.704218},
+    {"itemId":"FOOD_0045","hospId":"HOSP_17","catCode":"CAT_JPN","catName":"일식","storeName":"구월돈까스","address":"인천광역시 남동구 인하로507번길 24 (구월동)","menus":"등심돈까스(8,500원) / 우동(6,500원)","lat":37.446128,"lng":126.701842},
+    {"itemId":"FOOD_0046","hospId":"HOSP_18","catCode":"CAT_KOR","catName":"한식","storeName":"선진칼국수","address":"인천광역시 미추홀구 매소홀로 73-24 (용현동) 1층","menus":"손칼국수(7,000원) / 콩국수(8,000원)","lat":37.456128,"lng":126.648912},
+    {"itemId":"FOOD_0047","hospId":"HOSP_18","catCode":"CAT_JPN","catName":"일식","storeName":"지금돈까스","address":"인천광역시 미추홀구 용정공원로83번길 43 (용현동) 130호","menus":"등심카츠(8,500원) / 치즈카츠(9,500원)","lat":37.451824,"lng":126.651284},
+    {"itemId":"FOOD_0048","hospId":"HOSP_18","catCode":"CAT_KOR","catName":"한식","storeName":"레커훈스 인하대점","address":"인천광역시 미추홀구 인하로67번길 10 (용현동)","menus":"수제버거·한식세트(7,900원)","lat":37.449812,"lng":126.653128},
+    {"itemId":"FOOD_0049","hospId":"HOSP_19","catCode":"CAT_KOR","catName":"한식","storeName":"팔달집밥","address":"경기도 수원시 팔달구 중부대로 112 (지동)","menus":"백반(7,500원) / 순두부찌개(7,500원)","lat":37.278912,"lng":127.028914},
+    {"itemId":"FOOD_0050","hospId":"HOSP_19","catCode":"CAT_CHN","catName":"중식","storeName":"중화반점","address":"경기도 수원시 팔달구 정조로 780 (팔달로2가)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":37.279812,"lng":127.016412},
+    {"itemId":"FOOD_0051","hospId":"HOSP_22","catCode":"CAT_KOR","catName":"한식","storeName":"영통시골밥상","address":"경기도 수원시 영통구 월드컵로 193 (원천동)","menus":"청국장(8,000원) / 제육볶음(8,500원)","lat":37.281214,"lng":127.049128},
+    {"itemId":"FOOD_0052","hospId":"HOSP_22","catCode":"CAT_JPN","catName":"일식","storeName":"아주돈까스","address":"경기도 수원시 영통구 아주로 45 (원천동)","menus":"수제돈까스(8,500원) / 알밥(8,000원)","lat":37.282412,"lng":127.046812},
+    {"itemId":"FOOD_0053","hospId":"HOSP_20","catCode":"CAT_KOR","catName":"한식","storeName":"고잔한식","address":"경기도 안산시 단원구 적금로 110 (고잔동)","menus":"김치찌개(8,000원) / 된장찌개(8,000원)","lat":37.317812,"lng":126.823914},
+    {"itemId":"FOOD_0054","hospId":"HOSP_20","catCode":"CAT_CHN","catName":"중식","storeName":"단원반점","address":"경기도 안산시 단원구 광덕대로 174 (고잔동)","menus":"짜장면(6,500원) / 짬뽕(7,500원)","lat":37.319412,"lng":126.828914},
+    {"itemId":"FOOD_0055","hospId":"HOSP_21","catCode":"CAT_KOR","catName":"한식","storeName":"구미동집밥","address":"경기도 성남시 분당구 구미로 185 (구미동)","menus":"가정식백반(8,500원) / 비빔밥(8,500원)","lat":37.352814,"lng":127.124128},
+    {"itemId":"FOOD_0056","hospId":"HOSP_21","catCode":"CAT_JPN","catName":"일식","storeName":"분당소바우동","address":"경기도 성남시 분당구 성남대로 151 (구미동)","menus":"판모밀(8,500원) / 유부우동(7,500원)","lat":37.350128,"lng":127.121842},
+    {"itemId":"FOOD_0057","hospId":"HOSP_23","catCode":"CAT_KOR","catName":"한식","storeName":"평촌한식뷔페","address":"경기도 안양시 동안구 관평로 176 (관양동)","menus":"한식뷔페(8,000원)","lat":37.392412,"lng":126.963128},
+    {"itemId":"FOOD_0058","hospId":"HOSP_23","catCode":"CAT_CHN","catName":"중식","storeName":"범계반점","address":"경기도 안양시 동안구 평촌대로223번길 42 (호계동)","menus":"짜장면(6,500원) / 짬뽕(7,500원)","lat":37.389412,"lng":126.951842},
+    {"itemId":"FOOD_0059","hospId":"HOSP_24","catCode":"CAT_KOR","catName":"한식","storeName":"사천막국수","address":"강원특별자치도 강릉시 사천면 진리해변길 65","menus":"물막국수(8,000원) / 비빔막국수(8,000원)","lat":37.821412,"lng":128.861284},
+    {"itemId":"FOOD_0060","hospId":"HOSP_25","catCode":"CAT_KOR","catName":"한식","storeName":"일산집밥","address":"강원특별자치도 원주시 일산로 32 (일산동)","menus":"백반(7,500원) / 된장찌개(7,500원)","lat":37.349812,"lng":127.946812},
+    {"itemId":"FOOD_0061","hospId":"HOSP_25","catCode":"CAT_CHN","catName":"중식","storeName":"원주반점","address":"강원특별자치도 원주시 평원로 68 (중앙동)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":37.346812,"lng":127.948912},
+    {"itemId":"FOOD_0062","hospId":"HOSP_26","catCode":"CAT_KOR","catName":"한식","storeName":"개신한식","address":"충청북도 청주시 서원구 1순환로 760 (개신동)","menus":"김치찌개(7,500원) / 제육볶음(8,000원)","lat":36.623812,"lng":127.459812},
+    {"itemId":"FOOD_0063","hospId":"HOSP_26","catCode":"CAT_CHN","catName":"중식","storeName":"사창반점","address":"충청북도 청주시 서원구 창직로 24 (사창동)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":36.631284,"lng":127.465128},
+    {"itemId":"FOOD_0064","hospId":"HOSP_27","catCode":"CAT_KOR","catName":"한식","storeName":"안서골밥상","address":"충청남도 천안시 동남구 망향로 185 (안서동)","menus":"백반(7,500원) / 순두부찌개(7,500원)","lat":36.840128,"lng":127.170912},
+    {"itemId":"FOOD_0065","hospId":"HOSP_27","catCode":"CAT_CHN","catName":"중식","storeName":"신부반점","address":"충청남도 천안시 동남구 먹거리11길 28 (신부동)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":36.832412,"lng":127.137812},
+    {"itemId":"FOOD_0066","hospId":"HOSP_28","catCode":"CAT_KOR","catName":"한식","storeName":"문화동칼국수","address":"대전광역시 중구 문화로 268 (문화동)","menus":"손칼국수(7,000원) / 수육(15,000원)","lat":36.315812,"lng":127.415128},
+    {"itemId":"FOOD_0067","hospId":"HOSP_28","catCode":"CAT_CHN","catName":"중식","storeName":"대사반점","address":"대전광역시 중구 보문로 195 (대사동)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":36.318912,"lng":127.418912},
+    {"itemId":"FOOD_0068","hospId":"HOSP_29","catCode":"CAT_KOR","catName":"한식","storeName":"관저집밥","address":"대전광역시 서구 관저동로 142 (관저동)","menus":"가정식백반(7,500원) / 된장찌개(7,500원)","lat":36.305812,"lng":127.341284},
+    {"itemId":"FOOD_0069","hospId":"HOSP_29","catCode":"CAT_JPN","catName":"일식","storeName":"관저돈까스","address":"대전광역시 서구 관저중로 64 (관저동)","menus":"수제돈까스(8,500원) / 모밀(7,500원)","lat":36.303912,"lng":127.338912},
+    {"itemId":"FOOD_0070","hospId":"HOSP_30","catCode":"CAT_KOR","catName":"한식","storeName":"신동백반","address":"전북특별자치도 익산시 무왕로 910 (신동)","menus":"백반(7,500원) / 김치찌개(7,500원)","lat":35.965812,"lng":126.959812},
+    {"itemId":"FOOD_0071","hospId":"HOSP_30","catCode":"CAT_CHN","catName":"중식","storeName":"영등반점","address":"전북특별자치도 익산시 영등로 48 (영등동)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":35.951284,"lng":126.968912},
+    {"itemId":"FOOD_0072","hospId":"HOSP_31","catCode":"CAT_KOR","catName":"한식","storeName":"금암콩나물국밥","address":"전북특별자치도 전주시 덕진구 건지로 34 (금암동)","menus":"콩나물국밥(7,000원) / 비빔밥(8,000원)","lat":35.846128,"lng":127.142128},
+    {"itemId":"FOOD_0073","hospId":"HOSP_31","catCode":"CAT_CHN","catName":"중식","storeName":"덕진반점","address":"전북특별자치도 전주시 덕진구 기린대로 458 (덕진동1가)","menus":"짜장면(6,000원) / 물짜장(8,000원)","lat":35.843128,"lng":127.138912},
+    {"itemId":"FOOD_0074","hospId":"HOSP_32","catCode":"CAT_KOR","catName":"한식","storeName":"학동백반","address":"광주광역시 동구 제봉로 56 (학동)","menus":"백반정식(8,000원) / 애호박찌개(8,000원)","lat":35.140812,"lng":126.921284},
+    {"itemId":"FOOD_0075","hospId":"HOSP_33","catCode":"CAT_CHN","catName":"중식","storeName":"서석반점","address":"광주광역시 동구 필문대로 348 (서석동)","menus":"짜장면(6,000원) / 짬뽕(7,500원)","lat":35.138128,"lng":126.925128},
+    {"itemId":"FOOD_0076","hospId":"HOSP_34","catCode":"CAT_KOR","catName":"한식","storeName":"화순시골밥상","address":"전라남도 화순군 화순읍 서양로 310","menus":"백반(8,000원) / 다슬기탕(9,000원)","lat":35.058912,"lng":127.001812},
+    {"itemId":"FOOD_0077","hospId":"HOSP_35","catCode":"CAT_KOR","catName":"한식","storeName":"삼덕집밥","address":"대구광역시 중구 동덕로 142 (삼덕동2가)","menus":"된장찌개(7,500원) / 두루치기(8,000원)","lat":35.865128,"lng":128.603128},
+    {"itemId":"FOOD_0078","hospId":"HOSP_35","catCode":"CAT_CHN","catName":"중식","storeName":"동덕반점","address":"대구광역시 중구 동덕로 115 (삼덕동2가)","menus":"짜장면(6,000원) / 야끼우동(8,000원)","lat":35.863812,"lng":128.601812},
+    {"itemId":"FOOD_0079","hospId":"HOSP_36","catCode":"CAT_KOR","catName":"한식","storeName":"성서한식뷔페","address":"대구광역시 달서구 달구벌대로 1050 (신당동)","menus":"한식뷔페(7,500원)","lat":35.852812,"lng":128.478912},
+    {"itemId":"FOOD_0080","hospId":"HOSP_36","catCode":"CAT_JPN","catName":"일식","storeName":"이곡돈까스","address":"대구광역시 달서구 이곡동로 45 (이곡동)","menus":"등심돈까스(8,000원) / 우동(6,000원)","lat":35.858912,"lng":128.465128},
+    {"itemId":"FOOD_0081","hospId":"HOSP_37","catCode":"CAT_KOR","catName":"한식","storeName":"대명칼국수","address":"대구광역시 남구 두류공원로17길 41 (대명동)","menus":"손칼국수(6,500원) / 수제비(6,500원)","lat":35.842812,"lng":128.566812},
+    {"itemId":"FOOD_0082","hospId":"HOSP_38","catCode":"CAT_CHN","catName":"중식","storeName":"현충반점","address":"대구광역시 남구 현충로 158 (대명동)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":35.847128,"lng":128.583128},
+    {"itemId":"FOOD_0083","hospId":"HOSP_39","catCode":"CAT_KOR","catName":"한식","storeName":"칠곡국밥","address":"대구광역시 북구 호국로 820 (학정동)","menus":"돼지국밥(8,000원) / 순대국밥(8,000원)","lat":35.955812,"lng":128.563128},
+    {"itemId":"FOOD_0084","hospId":"HOSP_40","catCode":"CAT_KOR","catName":"한식","storeName":"송도집밥","address":"부산광역시 서구 감천로 248 (암남동)","menus":"정식백반(7,500원) / 된장찌개(7,500원)","lat":35.080128,"lng":129.013812},
+    {"itemId":"FOOD_0085","hospId":"HOSP_41","catCode":"CAT_KOR","catName":"한식","storeName":"대신동밀면","address":"부산광역시 서구 대신공원로 18 (동대신동2가)","menus":"물밀면(7,000원) / 비빔밀면(7,500원)","lat":35.119412,"lng":129.016812},
+    {"itemId":"FOOD_0086","hospId":"HOSP_42","catCode":"CAT_CHN","catName":"중식","storeName":"부민반점","address":"부산광역시 서구 구덕로 192 (부민동1가)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":35.100128,"lng":129.018128},
+    {"itemId":"FOOD_0087","hospId":"HOSP_43","catCode":"CAT_KOR","catName":"한식","storeName":"물금국밥","address":"경상남도 양산시 물금읍 금오로 35","menus":"돼지국밥(8,000원) / 수육백반(10,000원)","lat":35.326812,"lng":129.005812},
+    {"itemId":"FOOD_0088","hospId":"HOSP_44","catCode":"CAT_KOR","catName":"한식","storeName":"개금밀면","address":"부산광역시 부산진구 복지로 62 (개금동)","menus":"밀면(7,000원) / 만두(5,000원)","lat":35.144812,"lng":129.019812},
+    {"itemId":"FOOD_0089","hospId":"HOSP_44","catCode":"CAT_JPN","catName":"일식","storeName":"개금돈까스","address":"부산광역시 부산진구 가야대로 482 (개금동)","menus":"수제돈까스(8,000원) / 모밀(7,000원)","lat":35.151284,"lng":129.025128},
+    {"itemId":"FOOD_0090","hospId":"HOSP_45","catCode":"CAT_KOR","catName":"한식","storeName":"전하집밥","address":"울산광역시 동구 대학병원로 40 (전하동)","menus":"가정식백반(8,000원) / 김치찌개(8,000원)","lat":35.519412,"lng":129.428128},
+    {"itemId":"FOOD_0091","hospId":"HOSP_45","catCode":"CAT_CHN","catName":"중식","storeName":"일산반점","address":"울산광역시 동구 방어진순환도로 652 (일산동)","menus":"짜장면(6,500원) / 짬뽕(7,500원)","lat":35.508912,"lng":129.435128},
+    {"itemId":"FOOD_0092","hospId":"HOSP_46","catCode":"CAT_KOR","catName":"한식","storeName":"강남동국밥","address":"경상남도 진주시 강남로 92 (강남동)","menus":"소고기국밥(8,000원) / 비빔밥(8,000원)","lat":35.175412,"lng":128.094812},
+    {"itemId":"FOOD_0093","hospId":"HOSP_47","catCode":"CAT_KOR","catName":"한식","storeName":"합성동백반","address":"경상남도 창원시 마산회원구 팔용로 170 (합성동)","menus":"백반정식(7,500원) / 된장찌개(7,500원)","lat":35.241812,"lng":128.590812},
+    {"itemId":"FOOD_0094","hospId":"HOSP_47","catCode":"CAT_CHN","catName":"중식","storeName":"팔용반점","address":"경상남도 창원시 마산회원구 삼호로 56 (양덕동)","menus":"짜장면(6,000원) / 짬뽕(7,000원)","lat":35.238912,"lng":128.587128}
+  ];
 
-  /* 병원 ID -> 행정구역(시도, 시군 목록) 매핑 */
-  const HOSP_AREA_MAP = {
-    "HOSP_01": { sido: "서울특별시", siguns: ["종로구"] },
-    "HOSP_02": { sido: "서울특별시", siguns: ["광진구"] },
-    "HOSP_03": { sido: "서울특별시", siguns: ["동대문구"] },
-    "HOSP_04": { sido: "서울특별시", siguns: ["구로구"] },
-    "HOSP_05": { sido: "서울특별시", siguns: ["강남구"] },
-    "HOSP_06": { sido: "서울특별시", siguns: ["종로구"] },
-    "HOSP_07": { sido: "서울특별시", siguns: ["강남구"] },
-    "HOSP_08": { sido: "서울특별시", siguns: ["서대문구"] },
-    "HOSP_09": { sido: "서울특별시", siguns: ["양천구"] },
-    "HOSP_10": { sido: "서울특별시", siguns: ["송파구"] },
-    "HOSP_11": { sido: "서울특별시", siguns: ["동작구"] },
-    "HOSP_12": { sido: "서울특별시", siguns: ["성북구"] },
-    "HOSP_13": { sido: "서울특별시", siguns: ["서초구"] },
-    "HOSP_14": { sido: "서울특별시", siguns: ["성동구"] },
-    "HOSP_15": { sido: "인천광역시", siguns: ["부평구"] },
-    "HOSP_16": { sido: "경기도", siguns: ["부천시"] },
-    "HOSP_17": { sido: "인천광역시", siguns: ["남동구"] },
-    "HOSP_18": { sido: "인천광역시", siguns: ["중구", "제물포구"] },
-    "HOSP_19": { sido: "경기도", siguns: ["수원시"] },
-    "HOSP_20": { sido: "경기도", siguns: ["안산시"] },
-    "HOSP_21": { sido: "경기도", siguns: ["성남시"] },
-    "HOSP_22": { sido: "경기도", siguns: ["수원시"] },
-    "HOSP_23": { sido: "경기도", siguns: ["안양시"] },
-    "HOSP_24": { sido: "강원특별자치도", siguns: ["강릉시"] },
-    "HOSP_25": { sido: "강원특별자치도", siguns: ["원주시"] },
-    "HOSP_26": { sido: "충청북도", siguns: ["청주시"] },
-    "HOSP_27": { sido: "충청남도", siguns: ["천안시"] },
-    "HOSP_28": { sido: "대전광역시", siguns: ["중구"] },
-    "HOSP_29": { sido: "대전광역시", siguns: ["서구"] },
-    "HOSP_30": { sido: "전북특별자치도", siguns: ["익산시"] },
-    "HOSP_31": { sido: "전북특별자치도", siguns: ["전주시"] },
-    "HOSP_32": { sido: "전남광주통합특별시", siguns: ["동구"] },
-    "HOSP_33": { sido: "전남광주통합특별시", siguns: ["동구"] },
-    "HOSP_34": { sido: "전남광주통합특별시", siguns: ["화순군"] },
-    "HOSP_35": { sido: "대구광역시", siguns: ["중구"] },
-    "HOSP_36": { sido: "대구광역시", siguns: ["달서구"] },
-    "HOSP_37": { sido: "대구광역시", siguns: ["남구"] },
-    "HOSP_38": { sido: "대구광역시", siguns: ["남구"] },
-    "HOSP_39": { sido: "대구광역시", siguns: ["북구"] },
-    "HOSP_40": { sido: "부산광역시", siguns: ["서구"] },
-    "HOSP_41": { sido: "부산광역시", siguns: ["서구"] },
-    "HOSP_42": { sido: "부산광역시", siguns: ["서구"] },
-    "HOSP_43": { sido: "경상남도", siguns: ["양산시"] },
-    "HOSP_44": { sido: "부산광역시", siguns: ["부산진구"] },
-    "HOSP_45": { sido: "울산광역시", siguns: ["동구"] },
-    "HOSP_46": { sido: "경상남도", siguns: ["진주시"] },
-    "HOSP_47": { sido: "경상남도", siguns: ["창원시"] }
+  const REGION_COLORS = {
+    "서울권": "#1a73e8", "경기 서북부권": "#00897b", "경기 남부권": "#039be5",
+    "강원권": "#43a047", "충북권": "#8e24aa", "충남권": "#5e35b1",
+    "전북권": "#f4511e", "전남권": "#fb8c00", "경북권": "#3949ab",
+    "경남동부권": "#00acc1", "경남서부권": "#d81b60"
   };
 
-  async function loadCleanRestaurants() {
-    if (restaurantsLoaded) return ALL_RESTAURANTS;
-    try {
-      const res = await fetch("./good_price_restaurants_clean.json", { cache: "no-store" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const json = await res.json();
-      ALL_RESTAURANTS = Array.isArray(json) ? json : [];
-      restaurantsLoaded = true;
-    } catch (err) {
-      console.warn("JSON 로드 실패:", err);
-      showToast("good_price_restaurants_clean.json 파일을 index.html과 같은 경로에 두세요.");
-      ALL_RESTAURANTS = [];
+  const GOOGLE_FORM_URL = "https://forms.gle/f5ZK27zDzECrA3HQ6";
+  let selectedId = "HOSP_19";
+  let currentViewMode = "DETAIL";
+  let selectedFoodCat = "ALL";
+  let markers = {};
+  let radiusCircle = null;
+  let foodMarkers = [];
+
+  const googleStreets = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=ko', {
+    attribution: '&copy; Google Maps', maxZoom: 20
+  });
+  const cartoVoyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 20
+  });
+  const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}&hl=ko', {
+    attribution: '&copy; Google Satellite', maxZoom: 20
+  });
+
+  const map = L.map('map', { center: [36.35, 127.85], zoom: 7, layers: [googleStreets] });
+  L.control.layers({
+    "구글 기본 지도 (한국어)": googleStreets,
+    "모던 파스텔 지도": cartoVoyager,
+    "구글 위성 + 도로명 지도": googleHybrid
+  }, null, { position: 'topright' }).addTo(map);
+
+  /* 공식 홈페이지 URL 정규화: HOSPITALS 마스터의 검증된 HTTPS 메인 도메인 우선 적용 */
+  function getVerifiedHomepage(h) {
+    if (!h) return "";
+    if (h.homepage && h.homepage.trim()) return h.homepage.trim();
+    const d = HOSPITAL_DETAILS[h.id];
+    if (d && d.homepage && d.homepage.trim()) {
+      const raw = d.homepage.trim();
+      return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
     }
-    return ALL_RESTAURANTS;
+    return "";
   }
 
-  /* 업소 전용 검색어 생성 (병원명과 무관하게 상호명 + 정제 도로명주소만 사용) */
-  function getStoreShortcutQuery(item) {
-    const storeName = String(item.name || "").trim();
-    const roadAddr = String(item.searchAddress || item.address || "")
-      .replace(/\([^)]*\)/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    return `${storeName} ${roadAddr}`.trim();
+  function getShortName(name) {
+    return name
+      .replace("학교법인고려중앙학원고려대학교의과대학부속병원(안암병원)", "고려대안암병원")
+      .replace("학교법인가톨릭학원가톨릭대학교서울성모병원", "서울성모병원")
+      .replace("재단법인아산사회복지재단서울아산병원", "서울아산병원")
+      .replace("연세대학교의과대학강남세브란스병원", "강남세브란스병원")
+      .replace("연세대학교의과대학세브란스병원", "신촌세브란스병원")
+      .replace("고려대학교의과대학부속구로병원", "고려대구로병원")
+      .replace("고려대학교의과대학부속안산병원", "고려대안산병원")
+      .replace("이화여자대학교의과대학부속목동병원", "이대목동병원")
+      .replace("의료법인길의료재단길병원", "가천대길병원")
+      .replace("인하대학교의과대학부속병원", "인하대병원")
+      .replace("단국대학교의과대학부속병원", "단국대병원")
+      .replace("학교법인건양교육재단건양대학교병원", "건양대병원")
+      .replace("학교법인울산공업학원울산대학교병원", "울산대병원")
+      .replace("학교법인성균관대학삼성창원병원", "삼성창원병원");
   }
 
-  function openKakaoStoreShortcut(itemId) {
-    const item = ALL_RESTAURANTS.find(r => r.id === itemId);
-    if (!item) return;
-    const q = encodeURIComponent(getStoreShortcutQuery(item));
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
-    const url = isMobile
-      ? `https://m.map.kakao.com/actions/search?q=${q}`
-      : `https://map.kakao.com/?q=${q}`;
-    const win = window.open(url, "_blank", "noopener,noreferrer");
-    if (!win) window.location.href = url;
+  function showToast(msg) {
+    const el = document.getElementById('toastMsg');
+    el.innerText = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2200);
   }
 
-  function openNaverStoreShortcut(itemId) {
-    const item = ALL_RESTAURANTS.find(r => r.id === itemId);
-    if (!item) return;
-    const q = encodeURIComponent(getStoreShortcutQuery(item));
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
-    if (isMobile) {
-      window.location.href = `nmap://search?query=${q}&appname=hospital.map`;
-      setTimeout(() => {
-        if (!document.hidden) {
-          const w = window.open(`https://m.map.naver.com/search2/search.naver?query=${q}`, "_blank", "noopener,noreferrer");
-          if (!w) window.location.href = `https://m.map.naver.com/search2/search.naver?query=${q}`;
-        }
-      }, 850);
+  function createCustomIcon(h, isSelected) {
+    const color = REGION_COLORS[h.region] || "#1a73e8";
+    const num = h.id.replace("HOSP_", "");
+    return L.divIcon({
+      className: '',
+      html: `<div class="custom-pin ${isSelected ? 'active-pin' : ''}" style="background-color:${color}; width:26px; height:26px;">${num}</div>`,
+      iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -14]
+    });
+  }
+
+  function getSearchQueryForHospital(h) {
+    const shortName = getShortName(h.name);
+    return `${shortName} ${h.address}`.trim();
+  }
+
+  function openNaverMapSmart(targetHosp) {
+    const h = targetHosp || HOSPITALS.find(item => item.id === selectedId);
+    if (!h) return;
+    const query = getSearchQueryForHospital(h);
+    window.open(`https://map.naver.com/p/search/${encodeURIComponent(query)}`, '_blank', 'noopener,noreferrer');
+  }
+
+  function openKakaoMapSmart(targetHosp) {
+    const h = targetHosp || HOSPITALS.find(item => item.id === selectedId);
+    if (!h) return;
+    const query = getSearchQueryForHospital(h);
+    window.open(`https://map.kakao.com/?q=${encodeURIComponent(query)}`, '_blank', 'noopener,noreferrer');
+  }
+
+  function openGoogleMapSmart(targetHosp) {
+    const h = targetHosp || HOSPITALS.find(item => item.id === selectedId);
+    if (!h) return;
+    const query = getSearchQueryForHospital(h);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank', 'noopener,noreferrer');
+  }
+
+  function copySelectedAddress() {
+    const h = HOSPITALS.find(item => item.id === selectedId);
+    if (!h) return;
+    const text = `${getShortName(h.name)} (${h.address})`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => showToast(`복사됨: ${text}`));
     } else {
-      const win = window.open(`https://map.naver.com/p/search/${q}`, "_blank", "noopener,noreferrer");
-      if (!win) window.location.href = `https://map.naver.com/p/search/${q}`;
+      showToast(text);
     }
   }
 
-  function openStoreQuickCard(itemId) {
-    const item = ALL_RESTAURANTS.find(r => r.id === itemId);
-    if (!item) return;
-    const card = document.getElementById("storeQuickCard");
-    const badge = document.getElementById("sqcCatBadge");
-    badge.className = `code-badge ${item.catCode}`;
-    badge.innerText = item.catName;
+  function updateSelectedHospitalCard(h) {
+    const d = HOSPITAL_DETAILS[h.id];
+    document.getElementById('cardHospId').innerText = h.id;
+    document.getElementById('cardHospRegion').innerText = h.region;
+    document.getElementById('cardHospDistrict').innerText = h.district;
+    document.getElementById('cardHospName').innerText = h.name;
+    document.getElementById('cardHospAddress').innerText = (d && d.fullAddress) ? d.fullAddress : h.address;
+    document.getElementById('cardHospPhone').innerText = (d && d.phone) ? d.phone : (h.phone || '-');
+    document.getElementById('cardHospMeta').innerText = h.meta || '-';
 
-    document.getElementById("sqcStoreName").innerText = item.name;
-    document.getElementById("sqcAvgPrice").innerText = item.avgPrice
-      ? `메뉴 평균 ${Number(item.avgPrice).toLocaleString()}원`
-      : "평균가 미산정";
-    document.getElementById("sqcAddress").innerText = `📍 ${item.address} (${item.sido} ${item.sigun})`;
-
-    const menuArr = Array.isArray(item.menus) ? item.menus : [String(item.menus || "")];
-    document.getElementById("sqcMenus").innerHTML = menuArr
-      .filter(Boolean)
-      .map(m => `<span class="sqc-menu-chip">• ${m}</span>`)
-      .join("");
-
-    document.getElementById("sqcKakaoBtn").onclick = () => openKakaoStoreShortcut(item.id);
-    document.getElementById("sqcNaverBtn").onclick = () => openNaverStoreShortcut(item.id);
-    card.classList.add("show");
+    const hpUrl = getVerifiedHomepage(h);
+    const hpBtn = document.getElementById('cardHomepageBtn');
+    if (hpUrl) {
+      hpBtn.href = hpUrl;
+      hpBtn.classList.remove('btn-disabled');
+      hpBtn.innerText = "🌐 공식 홈페이지 ↗";
+    } else {
+      hpBtn.href = "#";
+      hpBtn.classList.add('btn-disabled');
+      hpBtn.innerText = "🌐 홈페이지 미등록";
+    }
   }
 
-  function closeStoreQuickCard() {
-    document.getElementById("storeQuickCard").classList.remove("show");
+  function renderTableAndMap() {
+    const regionFilter = document.getElementById('regionFilter').value;
+    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+    const tbody = document.getElementById('hospitalTableBody');
+    tbody.innerHTML = "";
+    Object.values(markers).forEach(m => map.removeLayer(m));
+    markers = {};
+
+    const filtered = HOSPITALS.filter(h => {
+      const matchRegion = (regionFilter === "ALL" || h.region === regionFilter);
+      const matchKeyword = !keyword ||
+        h.id.toLowerCase().includes(keyword) || h.name.toLowerCase().includes(keyword) ||
+        h.district.toLowerCase().includes(keyword) || h.address.toLowerCase().includes(keyword) ||
+        h.meta.toLowerCase().includes(keyword);
+      return matchRegion && matchKeyword;
+    });
+    document.getElementById('filteredCount').innerText = `표시: ${filtered.length}개`;
+    const bounds = [];
+
+    filtered.forEach(h => {
+      const hasDetail = Boolean(HOSPITAL_DETAILS[h.id]);
+      const isSelected = (h.id === selectedId);
+      const hpUrl = getVerifiedHomepage(h);
+      const tr = document.createElement('tr');
+      if (isSelected) tr.classList.add('selected');
+      tr.onclick = () => selectHospital(h.id, true);
+      tr.ondblclick = () => { selectHospital(h.id, true); switchViewMode('DETAIL'); };
+      const hpCell = hpUrl
+        ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" style="color:#1a73e8; font-weight:700; text-decoration:none;">방문 ↗</a>`
+        : '-';
+      tr.innerHTML = `
+        <td>${hasDetail ? '<span class="detail-tag-done">상세보유</span>' : '<span class="detail-tag-none">기본정보</span>'}</td>
+        <td><strong>${h.id}</strong></td>
+        <td><span class="region-tag">${h.region}</span></td>
+        <td>${h.name}</td>
+        <td>${h.district}</td>
+        <td>${h.address}</td>
+        <td>${h.meta || '-'}</td>
+        <td>${hpCell}</td>
+      `;
+      tbody.appendChild(tr);
+
+      if (h.lat && h.lng) {
+        const marker = L.marker([h.lat, h.lng], { icon: createCustomIcon(h, isSelected), zIndexOffset: isSelected ? 1000 : 0 }).addTo(map);
+        marker.bindTooltip(getShortName(h.name), { direction: 'top', offset: [0, -14], className: 'hospital-tooltip' });
+        const dInfo = HOSPITAL_DETAILS[h.id];
+        const summaryLine = dInfo
+          ? `<div style="color:#137333; font-size:11.5px; font-weight:700; margin-top:4px;">🛏️ 병상 ${(dInfo.beds.generalHigh || 0) + (dInfo.beds.generalNormal || 0) + (dInfo.beds.icuAdult || 0) + (dInfo.beds.icuChild || 0) + (dInfo.beds.icuNeonatal || 0) + (dInfo.beds.psyOpenHigh || 0) + (dInfo.beds.psyOpenNormal || 0) + (dInfo.beds.psyCloseHigh || 0) + (dInfo.beds.psyCloseNormal || 0)}개 · 👨‍⚕️ 의사 ${dInfo.doctors.total}명</div>`
+          : '';
+        marker.bindPopup(`
+          <div style="font-size:13px; line-height:1.6; min-width:235px; max-width:295px; white-space:normal;">
+            <div style="font-size:11px; color:#5f6368; font-weight:600;">${h.id} · ${h.region}</div>
+            <div style="font-size:14px; font-weight:700; color:#1a73e8; margin-bottom:4px;">${h.name}</div>
+            <div style="color:#3c4043;">📍 ${h.address}</div>
+            <div style="color:#5f6368; font-size:12px; margin-top:3px;">🏆 ${h.meta || '-'}</div>
+            ${summaryLine}
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button type="button" onclick="openDetailFromPopup('${h.id}')" style="flex:1; background:#e8f0fe; color:#1967d2; padding:5px 8px; border-radius:6px; font-size:11.5px; font-weight:700;">🏥 상세현황</button>
+              ${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer" style="flex:1; text-align:center; background:#f1f3f4; color:#202124; padding:5px 8px; border-radius:6px; font-size:11.5px; font-weight:700; text-decoration:none;">🌐 홈페이지 ↗</a>` : ''}
+            </div>
+          </div>
+        `);
+        marker.on('click', () => {
+          selectHospital(h.id, false);
+          if (currentViewMode === 'FOOD') {
+            document.getElementById('foodHospFilter').value = h.id;
+            renderFoodView();
+          } else if (currentViewMode === 'DETAIL') {
+            document.getElementById('detailHospSelector').value = h.id;
+            renderHospitalDetailView();
+          }
+        });
+        markers[h.id] = marker;
+        bounds.push([h.lat, h.lng]);
+      }
+    });
+    if (bounds.length > 0 && regionFilter !== "ALL") map.fitBounds(bounds, { padding: [45, 45] });
+  }
+
+  function openDetailFromPopup(id) {
+    selectHospital(id, false);
+    switchViewMode('DETAIL');
+  }
+
+  function selectHospital(id, panToMap) {
+    selectedId = id;
+    const h = HOSPITALS.find(item => item.id === id);
+    if (!h) return;
+    updateSelectedHospitalCard(h);
+    if (document.getElementById('detailHospSelector')) {
+      document.getElementById('detailHospSelector').value = h.id;
+    }
+    renderTableAndMap();
+    if (currentViewMode === 'DETAIL') renderHospitalDetailView();
+    if (panToMap && h.lat && h.lng) {
+      map.flyTo([h.lat, h.lng], 15, { duration: 0.7 });
+      setTimeout(() => { if (markers[h.id]) markers[h.id].openPopup(); }, 720);
+    }
+  }
+
+  function initDetailSelector() {
+    const sel = document.getElementById('detailHospSelector');
+    sel.innerHTML = "";
+    HOSPITALS.forEach(h => {
+      const hasD = Boolean(HOSPITAL_DETAILS[h.id]);
+      const opt = document.createElement('option');
+      opt.value = h.id;
+      opt.textContent = `${hasD ? '🏥' : '📍'} [${h.id}] ${h.name}`;
+      sel.appendChild(opt);
+    });
+    sel.value = selectedId || "HOSP_19";
+  }
+
+  function onDetailHospitalSelect() {
+    const hid = document.getElementById('detailHospSelector').value;
+    selectHospital(hid, true);
+  }
+
+  function renderHospitalDetailView() {
+    const hid = document.getElementById('detailHospSelector').value || selectedId || "HOSP_19";
+    const h = HOSPITALS.find(item => item.id === hid);
+    const d = HOSPITAL_DETAILS[hid];
+    const kw = (document.getElementById('detailSearchInput').value || "").trim().toLowerCase();
+    const area = document.getElementById('detailContentArea');
+
+    if (!h) return;
+
+    const hpUrl = getVerifiedHomepage(h);
+
+    if (!d) {
+      area.innerHTML = `
+        <div class="detail-hero-card">
+          <div class="detail-hero-top">
+            <div>
+              <div class="detail-badges">
+                <span class="badge-tertiary">상급종합</span>
+                <span class="badge-founder">${h.region}</span>
+                <span class="detail-tag-none">상세 병상·의료진 업데이트 예정</span>
+              </div>
+              <div class="detail-hosp-title">[${h.id}] ${h.name}</div>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn-naver" style="padding:6px 11px; font-size:12px;" onclick="openNaverMapSmart()">🟢 네이버지도</button>
+              <button type="button" class="btn-google" style="padding:6px 11px; font-size:12px;" onclick="openGoogleMapSmart()">🔵 구글맵</button>
+              ${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer" class="btn-link btn-primary" style="padding:6px 11px; font-size:12px;">🌐 공식 홈페이지 ↗</a>` : ''}
+            </div>
+          </div>
+          <div class="detail-info-grid">
+            <div class="detail-info-item"><span class="lbl">도로명주소</span><span>${h.address}</span></div>
+            <div class="detail-info-item"><span class="lbl">대표번호</span><strong>${h.phone || '-'}</strong></div>
+            <div class="detail-info-item"><span class="lbl">평가순위</span><span>${h.meta || '-'}</span></div>
+            <div class="detail-info-item"><span class="lbl">홈페이지</span>${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer">${hpUrl} ↗</a>` : '-'}</div>
+          </div>
+        </div>
+        <div class="empty-detail-box">
+          <h4>해당 병원의 세부 병상수 및 진료과목 데이터는 순차 업데이트 중입니다</h4>
+          <p>건강보험심사평가원(HIRA) 기준 병상·의료진 정보 제보나 수정요청이 필요하시면<br/>아래 수정요청 폼을 통해 의견을 남겨주실 수 있습니다.</p>
+          <a href="${GOOGLE_FORM_URL}" target="_blank" rel="noopener noreferrer" class="btn-link btn-request">📝 구글폼으로 정보 제보·수정요청하기 ↗</a>
+        </div>
+      `;
+      return;
+    }
+
+    const b = d.beds;
+    const f = d.facilities;
+    const doc = d.doctors;
+    const totalPsy = (b.psyOpenHigh || 0) + (b.psyOpenNormal || 0) + (b.psyCloseHigh || 0) + (b.psyCloseNormal || 0);
+    const totalIcu = (b.icuAdult || 0) + (b.icuChild || 0) + (b.icuNeonatal || 0);
+    const totalBeds = (b.generalHigh || 0) + (b.generalNormal || 0) + totalIcu + totalPsy;
+    const hasRoomingIn = (f.roomingIn === 1 || f.roomingIn === "1" || f.roomingIn === "보유");
+
+    const filteredDepts = (d.specialties || [])
+      .filter(s => !kw || s.name.toLowerCase().includes(kw))
+      .sort((a, b) => b.count - a.count);
+    const maxDeptCount = Math.max(...(d.specialties || []).map(s => s.count), 1);
+
+    const filteredAreas = (d.specialAreas || [])
+      .filter(a => !kw || a.toLowerCase().includes(kw));
+
+    const deptCardsHtml = filteredDepts.map(s => {
+      const pct = Math.max(6, Math.round((s.count / maxDeptCount) * 100));
+      return `
+        <div class="dept-card">
+          <div class="dept-top">
+            <span class="dept-name">${s.name}</span>
+            <span class="dept-cnt">${s.count}명</span>
+          </div>
+          <div class="dept-bar-bg"><div class="dept-bar-fill" style="width:${pct}%;"></div></div>
+        </div>
+      `;
+    }).join("");
+
+    const specialAreasHtml = filteredAreas.map(item => {
+      const isHighlight = item.includes("응급") || item.includes("중환자") || item.includes("심층진찰") || item.includes("호스피스");
+      return `<span class="special-tag ${isHighlight ? 'highlight' : ''}">• ${item}</span>`;
+    }).join("");
+
+    area.innerHTML = `
+      <div class="detail-hero-card">
+        <div class="detail-hero-top">
+          <div>
+            <div class="detail-badges">
+              <span class="badge-tertiary">${d.hospitalType || '상급종합'}</span>
+              <span class="badge-founder">${d.founderType || '학교법인'}</span>
+              <span class="badge-founder">${h.region}</span>
+              <span class="badge-verified">✓ 병상·의료진 현황</span>
+            </div>
+            <div class="detail-hosp-title">[${h.id}] ${h.name}</div>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-naver" style="padding:6px 11px; font-size:12px;" onclick="openNaverMapSmart()">🟢 네이버지도</button>
+            <button type="button" class="btn-google" style="padding:6px 11px; font-size:12px;" onclick="openGoogleMapSmart()">🔵 구글맵</button>
+            ${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer" class="btn-link btn-primary" style="padding:6px 11px; font-size:12px;">🌐 공식 홈페이지 ↗</a>` : ''}
+          </div>
+        </div>
+        <div class="detail-info-grid">
+          <div class="detail-info-item"><span class="lbl">주소</span><span>${d.fullAddress || h.address}</span></div>
+          <div class="detail-info-item"><span class="lbl">전화번호</span><strong>${d.phone || '-'}</strong></div>
+          <div class="detail-info-item"><span class="lbl">평가순위</span><span>${h.meta || '-'}</span></div>
+          <div class="detail-info-item"><span class="lbl">홈페이지</span>${hpUrl ? `<a href="${hpUrl}" target="_blank" rel="noopener noreferrer">${hpUrl} ↗</a>` : '-'}</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid-4">
+        <div class="kpi-card">
+          <span class="k-label">허가 총 병상수</span>
+          <span class="k-value">${totalBeds.toLocaleString()}병상</span>
+          <span class="k-sub">일반 ${b.generalHigh + b.generalNormal} · 중환자 ${totalIcu} · 정신과 ${totalPsy}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="k-label">총 의사 인력</span>
+          <span class="k-value" style="color:#03c75a;">${doc.total.toLocaleString()}명</span>
+          <span class="k-sub">의사 ${doc.md} · 치과 ${doc.dentist} · 한의사 ${doc.koreanMed}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="k-label">개설 전문과목</span>
+          <span class="k-value" style="color:#5e35b1;">${d.specialties.length}개 과</span>
+          <span class="k-sub">최다: ${filteredDepts[0] ? `${filteredDepts[0].name}(${filteredDepts[0].count}명)` : '-'}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="k-label">특수진료가능분야</span>
+          <span class="k-value" style="color:#e37400;">${d.specialAreas.length}개 분야</span>
+          <span class="k-sub">응급실 ${f.emergency} · 수술실 ${f.operating} · 인공신장 ${f.hemodialysis}</span>
+        </div>
+      </div>
+
+      <div class="detail-section-card">
+        <div class="detail-section-header">
+          <h3>🛏️ 시설 및 운영정보 · 병상수 현황</h3>
+          <span class="sec-note">일반입원실 · 중환자실 · 특수병상 및 치료실</span>
+        </div>
+        <div class="bed-category-grid">
+          <div class="bed-box">
+            <div class="bed-box-title">일반입원실 <span>소계 ${(b.generalHigh || 0) + (b.generalNormal || 0)}병상</span></div>
+            <div class="bed-sub-row">
+              <div class="bed-pill"><div class="bp-name">상급</div><div class="bp-num">${b.generalHigh}</div></div>
+              <div class="bed-pill"><div class="bp-name">일반</div><div class="bp-num">${b.generalNormal}</div></div>
+            </div>
+          </div>
+          <div class="bed-box">
+            <div class="bed-box-title">중환자실 <span>소계 ${totalIcu}병상</span></div>
+            <div class="bed-sub-row">
+              <div class="bed-pill"><div class="bp-name">성인</div><div class="bp-num">${b.icuAdult}</div></div>
+              <div class="bed-pill"><div class="bp-name">소아</div><div class="bp-num ${b.icuChild === 0 ? 'zero' : ''}">${b.icuChild}</div></div>
+              <div class="bed-pill"><div class="bp-name">신생아</div><div class="bp-num">${b.icuNeonatal}</div></div>
+            </div>
+          </div>
+          <div class="bed-box">
+            <div class="bed-box-title">정신과개방 <span>소계 ${(b.psyOpenHigh || 0) + (b.psyOpenNormal || 0)}병상</span></div>
+            <div class="bed-sub-row">
+              <div class="bed-pill"><div class="bp-name">상급</div><div class="bp-num ${b.psyOpenHigh === 0 ? 'zero' : ''}">${b.psyOpenHigh}</div></div>
+              <div class="bed-pill"><div class="bp-name">일반</div><div class="bp-num ${b.psyOpenNormal === 0 ? 'zero' : ''}">${b.psyOpenNormal}</div></div>
+            </div>
+          </div>
+          <div class="bed-box">
+            <div class="bed-box-title">정신과폐쇄 <span>소계 ${(b.psyCloseHigh || 0) + (b.psyCloseNormal || 0)}병상</span></div>
+            <div class="bed-sub-row">
+              <div class="bed-pill"><div class="bp-name">상급</div><div class="bp-num ${b.psyCloseHigh === 0 ? 'zero' : ''}">${b.psyCloseHigh}</div></div>
+              <div class="bed-pill"><div class="bp-name">일반</div><div class="bp-num">${b.psyCloseNormal}</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="facility-mini-grid">
+          <div class="fac-chip"><span class="fn">격리병실</span><span class="fv">${f.isolation}</span></div>
+          <div class="fac-chip"><span class="fn">무균치료실</span><span class="fv">${f.sterile}</span></div>
+          <div class="fac-chip"><span class="fn">임종실</span><span class="fv">${f.hospice}</span></div>
+          <div class="fac-chip"><span class="fn">분만실</span><span class="fv">${f.delivery}</span></div>
+          <div class="fac-chip"><span class="fn">수술실</span><span class="fv">${f.operating}</span></div>
+          <div class="fac-chip"><span class="fn">응급실</span><span class="fv">${f.emergency}</span></div>
+          <div class="fac-chip"><span class="fn">물리치료실</span><span class="fv">${f.physicalTherapy}</span></div>
+          <div class="fac-chip"><span class="fn">신생아실</span><span class="fv">${f.nursery}</span></div>
+          <div class="fac-chip"><span class="fn">모자동실</span><span class="fv ${hasRoomingIn ? 'has-badge' : 'no-badge'}">${hasRoomingIn ? '보유' : '미보유'}</span></div>
+          <div class="fac-chip"><span class="fn">회복실</span><span class="fv">${f.recovery}</span></div>
+          <div class="fac-chip"><span class="fn">인공신장실</span><span class="fv">${f.hemodialysis}</span></div>
+          <div class="fac-chip"><span class="fn">강내치료실</span><span class="fv">${f.brachytherapy}</span></div>
+          <div class="fac-chip"><span class="fn">방사선옥소</span><span class="fv">${f.radioiodine}</span></div>
+        </div>
+      </div>
+
+      <div class="detail-section-card">
+        <div class="detail-section-header">
+          <h3>👨‍⚕️ 전문과목별 전문의 현황 (${filteredDepts.length}개 과)</h3>
+          <span class="sec-note">※ 복수전문의 포함 과목별 산정 · 인원순 정렬</span>
+        </div>
+        <div class="dept-grid">${deptCardsHtml || '<div style="color:#80868b; font-size:12.5px;">검색 조건에 일치하는 진료과목이 없습니다.</div>'}</div>
+      </div>
+
+      <div class="detail-section-card">
+        <div class="detail-section-header">
+          <h3>🔬 특수진료가능분야 (${filteredAreas.length}개 항목)</h3>
+          <span class="sec-note">심평원 등록 특수진료 및 시범사업 지정 현황</span>
+        </div>
+        <div class="special-tags-wrap">${specialAreasHtml || '<div style="color:#80868b; font-size:12.5px;">검색 조건에 일치하는 특수진료분야가 없습니다.</div>'}</div>
+      </div>
+    `;
+  }
+
+  function calcDistanceMeters(lat1, lng1, lat2, lng2) {
+    const R = 6371000, toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
   function initFoodSelectOptions() {
-    const filterSel = document.getElementById("foodHospFilter");
-    filterSel.innerHTML = `<option value="ALL">전체 지역 (8,447개소)</option>`;
+    const filterSel = document.getElementById('foodHospFilter');
     HOSPITALS.forEach(h => {
-      const opt = document.createElement("option");
+      const opt = document.createElement('option');
       opt.value = h.id;
       opt.textContent = `[${h.id}] ${getShortName(h.name)} (${h.district})`;
       filterSel.appendChild(opt);
     });
   }
 
+  function clearFoodMapLayers() {
+    if (radiusCircle) { map.removeLayer(radiusCircle); radiusCircle = null; }
+    foodMarkers.forEach(m => map.removeLayer(m));
+    foodMarkers = [];
+  }
+
   function setFoodCatFilter(cat) {
     selectedFoodCat = cat;
-    document.querySelectorAll(".cat-pill").forEach(btn => {
-      btn.classList.toggle("active", btn.getAttribute("data-cat") === cat);
-    });
+    document.querySelectorAll('.cat-pill').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-cat') === cat));
     renderFoodView();
   }
 
   function onFoodHospitalChange() {
-    const hid = document.getElementById("foodHospFilter").value;
-    if (hid !== "ALL") selectHospital(hid, false);
+    const hid = document.getElementById('foodHospFilter').value;
+    if (hid !== 'ALL') {
+      selectHospital(hid, false);
+    }
     renderFoodView();
   }
 
-  function calcGroupAvg(list) {
-    const valid = list.map(i => Number(i.avgPrice)).filter(n => !isNaN(n) && n > 0);
-    if (!valid.length) return "-";
-    return Math.round(valid.reduce((a, b) => a + b, 0) / valid.length).toLocaleString() + "원";
+  function extractAvgPrice(menuStr) {
+    if (!menuStr) return null;
+    const matches = menuStr.match(/([\d,]+)\s*원/g);
+    if (!matches || matches.length === 0) return null;
+    const nums = matches.map(m => parseInt(m.replace(/[^\d]/g, ''), 10)).filter(n => !isNaN(n) && n > 0);
+    return nums.length ? Math.round(nums.reduce((a, b) => a + b, 0) / nums.length) : null;
   }
 
-  async function renderFoodView() {
-    await loadCleanRestaurants();
-    if (typeof clearFoodMapLayers === "function") clearFoodMapLayers();
+  function renderFoodView() {
+    const hospFilter = document.getElementById('foodHospFilter').value;
+    const radiusMeters = parseFloat(document.getElementById('foodRadiusFilter').value) || 10000;
+    const keyword = document.getElementById('foodSearchInput').value.trim().toLowerCase();
+    const targetHosp = (hospFilter !== "ALL") ? HOSPITALS.find(h => h.id === hospFilter) : null;
 
-    const hospFilter = document.getElementById("foodHospFilter").value;
-    const keyword = (document.getElementById("foodSearchInput").value || "").trim().toLowerCase();
-    const areaRule = hospFilter !== "ALL" ? HOSP_AREA_MAP[hospFilter] : null;
+    const withinRadius = (item) => {
+      if (!targetHosp || !targetHosp.lat || !targetHosp.lng) return true;
+      if (item.lat && item.lng) {
+        return calcDistanceMeters(targetHosp.lat, targetHosp.lng, item.lat, item.lng) <= radiusMeters;
+      }
+      return item.hospId === hospFilter;
+    };
 
-    const areaBase = !areaRule
-      ? ALL_RESTAURANTS
-      : ALL_RESTAURANTS.filter(r => r.sido === areaRule.sido && areaRule.siguns.includes(r.sigun));
+    const baseInRadius = GOOD_PRICE_STORES.filter(item => (hospFilter === "ALL") ? true : withinRadius(item));
 
-    const filtered = areaBase.filter(item => {
-      const matchCat = selectedFoodCat === "ALL" || item.catCode === selectedFoodCat;
-      const menuText = Array.isArray(item.menus) ? item.menus.join(" ") : String(item.menus || "");
+    const filtered = baseInRadius.filter(item => {
+      const matchCat = (selectedFoodCat === "ALL" || item.catCode === selectedFoodCat);
       const matchKw = !keyword ||
-        String(item.name || "").toLowerCase().includes(keyword) ||
-        menuText.toLowerCase().includes(keyword) ||
-        String(item.address || "").toLowerCase().includes(keyword) ||
-        String(item.sigun || "").toLowerCase().includes(keyword);
+        item.storeName.toLowerCase().includes(keyword) ||
+        item.menus.toLowerCase().includes(keyword) ||
+        item.address.toLowerCase().includes(keyword);
       return matchCat && matchKw;
     });
 
-    document.getElementById("foodCountBadge").innerText = `${filtered.length}개소`;
-    document.getElementById("sumAll").innerText = `${areaBase.length}개소`;
-    document.getElementById("sumAllSub").innerText = areaRule
-      ? `${areaRule.sido} ${areaRule.siguns.join(", ")}`
-      : "전국 정제 식당·분식";
+    document.getElementById('foodCountBadge').innerText = `${filtered.length}개소`;
+    document.getElementById('sumAll').innerText = `${baseInRadius.length}개소`;
+    document.getElementById('sumAllSub').innerText = targetHosp ? `${getShortName(targetHosp.name)} 반경 ${(radiusMeters/1000).toFixed(1)}km` : "전국 권역 전체";
 
-    const korList = areaBase.filter(i => i.catCode === "CAT_KOR");
-    const chnList = areaBase.filter(i => i.catCode === "CAT_CHN");
-    const otherList = areaBase.filter(i => ["CAT_JPN", "CAT_WST", "CAT_SNK"].includes(i.catCode));
+    ["CAT_KOR", "CAT_CHN", "CAT_JPN"].forEach(code => {
+      const sub = baseInRadius.filter(i => i.catCode === code);
+      const prices = sub.map(i => extractAvgPrice(i.menus)).filter(p => p !== null);
+      const avgP = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length).toLocaleString() + "원" : "-";
+      if (code === "CAT_KOR") { document.getElementById('sumKor').innerText = `${sub.length}개소`; document.getElementById('sumKorPrice').innerText = `대표메뉴 평균 ${avgP}`; }
+      else if (code === "CAT_CHN") { document.getElementById('sumChn').innerText = `${sub.length}개소`; document.getElementById('sumChnPrice').innerText = `대표메뉴 평균 ${avgP}`; }
+      else if (code === "CAT_JPN") { document.getElementById('sumJpn').innerText = `${sub.length}개소`; document.getElementById('sumJpnPrice').innerText = `대표메뉴 평균 ${avgP}`; }
+    });
 
-    document.getElementById("sumKor").innerText = `${korList.length}개소`;
-    document.getElementById("sumKorPrice").innerText = `평균 ${calcGroupAvg(korList)}`;
-    document.getElementById("sumChn").innerText = `${chnList.length}개소`;
-    document.getElementById("sumChnPrice").innerText = `평균 ${calcGroupAvg(chnList)}`;
-    document.getElementById("sumOther").innerText = `${otherList.length}개소`;
-    document.getElementById("sumOtherPrice").innerText = `평균 ${calcGroupAvg(otherList)}`;
-
-    const tbody = document.getElementById("foodTableBody");
+    const tbody = document.getElementById('foodTableBody');
     tbody.innerHTML = "";
-
     filtered.forEach(item => {
-      const tr = document.createElement("tr");
-      tr.onclick = () => openStoreQuickCard(item.id);
-      const menuDisplay = Array.isArray(item.menus) ? item.menus.join(" / ") : String(item.menus || "-");
-      const avgDisplay = item.avgPrice ? `${Number(item.avgPrice).toLocaleString()}원` : "-";
-
+      const tr = document.createElement('tr');
+      tr.onclick = () => {
+        if (item.lat && item.lng) map.flyTo([item.lat, item.lng], 16, { duration: 0.5 });
+      };
+      let distText = "-";
+      if (targetHosp && item.lat && item.lng) {
+        distText = `${(calcDistanceMeters(targetHosp.lat, targetHosp.lng, item.lat, item.lng) / 1000).toFixed(2)}km`;
+      }
+      const q = encodeURIComponent(`${item.storeName} ${item.address}`);
       tr.innerHTML = `
-        <td><span class="type-badge-good">식당</span></td>
-        <td><strong>${item.sigun}</strong></td>
-        <td><span class="code-badge ${item.catCode}">${item.catName}</span></td>
-        <td><strong>${item.name}</strong></td>
-        <td>${avgDisplay}</td>
-        <td>${menuDisplay}</td>
+        <td><span class="type-badge-good">착한가격</span></td>
+        <td><strong>${item.hospId}</strong></td>
+        <td><span class="code-badge code-${item.catCode}">${item.catName}</span></td>
+        <td><strong>${item.storeName}</strong></td>
+        <td>${distText}</td>
+        <td>${item.menus || '-'}</td>
         <td>${item.address}</td>
         <td onclick="event.stopPropagation()">
-          <button type="button" onclick="openKakaoStoreShortcut('${item.id}')" style="background:none; color:#b06000; font-weight:700; padding:0; margin-right:6px;">카카오</button>
-          <button type="button" onclick="openNaverStoreShortcut('${item.id}')" style="background:none; color:#03c75a; font-weight:700; padding:0;">네이버</button>
+          <a href="https://map.naver.com/p/search/${q}" target="_blank" rel="noopener noreferrer" style="color:#03c75a; font-weight:700; text-decoration:none; margin-right:6px;">네이버</a>
+          <a href="https://map.kakao.com/?q=${q}" target="_blank" rel="noopener noreferrer" style="color:#b06000; font-weight:700; text-decoration:none;">카카오</a>
         </td>
       `;
       tbody.appendChild(tr);
     });
+
+    clearFoodMapLayers();
+    if (targetHosp && targetHosp.lat && targetHosp.lng) {
+      radiusCircle = L.circle([targetHosp.lat, targetHosp.lng], {
+        radius: radiusMeters, color: '#1a73e8', fillColor: '#1a73e8', fillOpacity: 0.08, weight: 1.5, dashArray: '5, 5'
+      }).addTo(map);
+      map.fitBounds(radiusCircle.getBounds(), { padding: [25, 25] });
+    }
+
+    filtered.forEach(item => {
+      if (!item.lat || !item.lng) return;
+      const labelShort = item.catCode === "CAT_KOR" ? "한" : (item.catCode === "CAT_CHN" ? "중" : "일");
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="custom-pin" style="background-color:#03c75a; width:22px; height:22px; font-size:10px;">${labelShort}</div>`,
+        iconSize: [22, 22], iconAnchor: [11, 11]
+      });
+      const q = encodeURIComponent(`${item.storeName} ${item.address}`);
+      const m = L.marker([item.lat, item.lng], { icon }).addTo(map);
+      m.bindTooltip(`[${item.catName}] ${item.storeName}`, { direction: 'top', offset: [0, -10], className: 'hospital-tooltip' });
+      m.bindPopup(`
+        <div style="font-size:12.5px; line-height:1.5; min-width:215px;">
+          <div><strong>${item.hospId}</strong> · <span class="code-badge code-${item.catCode}">${item.catName}</span></div>
+          <div style="font-size:14px; font-weight:700; margin:3px 0;">${item.storeName}</div>
+          <div>🍽️ ${item.menus || '-'}</div>
+          <div style="color:#5f6368;">📍 ${item.address}</div>
+          <div style="display:flex; gap:6px; margin-top:7px;">
+            <a href="https://map.naver.com/p/search/${q}" target="_blank" rel="noopener noreferrer" style="flex:1; text-align:center; background:#03c75a; color:#fff; padding:4px 6px; border-radius:5px; font-size:11px; font-weight:700; text-decoration:none;">네이버지도</a>
+            <a href="https://map.kakao.com/?q=${q}" target="_blank" rel="noopener noreferrer" style="flex:1; text-align:center; background:#fee500; color:#191919; padding:4px 6px; border-radius:5px; font-size:11px; font-weight:700; text-decoration:none;">카카오맵</a>
+          </div>
+        </div>
+      `);
+      foodMarkers.push(m);
+    });
   }
+
+  function switchViewMode(mode) {
+    currentViewMode = mode;
+    document.getElementById('tabDetailBtn').classList.toggle('active', mode === 'DETAIL');
+    document.getElementById('tabHospitalBtn').classList.toggle('active', mode === 'HOSPITAL');
+    document.getElementById('tabFoodBtn').classList.toggle('active', mode === 'FOOD');
+
+    document.getElementById('detailRightWrapper').style.display = (mode === 'DETAIL') ? 'flex' : 'none';
+    document.getElementById('hospitalRightWrapper').style.display = (mode === 'HOSPITAL') ? 'flex' : 'none';
+    document.getElementById('foodRightWrapper').style.display = (mode === 'FOOD') ? 'flex' : 'none';
+
+    if (mode === 'HOSPITAL') {
+      clearFoodMapLayers();
+      renderTableAndMap();
+    } else if (mode === 'DETAIL') {
+      clearFoodMapLayers();
+      initDetailSelector();
+      renderHospitalDetailView();
+      const h = HOSPITALS.find(item => item.id === (selectedId || "HOSP_19"));
+      if (h && h.lat && h.lng) map.flyTo([h.lat, h.lng], 15, { duration: 0.6 });
+    } else {
+      document.getElementById('foodHospFilter').value = selectedId || "ALL";
+      renderFoodView();
+    }
+  }
+
+  function fitAllMarkers() {
+    if (currentViewMode === 'FOOD') {
+      document.getElementById('foodHospFilter').value = 'ALL';
+      renderFoodView();
+      map.flyTo([36.35, 127.85], 7, { duration: 0.7 });
+      return;
+    }
+    document.getElementById('regionFilter').value = "ALL";
+    document.getElementById('searchInput').value = "";
+    renderTableAndMap();
+    map.flyTo([36.35, 127.85], 7, { duration: 0.7 });
+  }
+
   initFoodSelectOptions();
   initDetailSelector();
   selectHospital("HOSP_19", false);
